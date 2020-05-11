@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8cd7be7c3532c974c919d1b2a4cf439b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - DiffuseAlpha: {instanceID: 0}
+  - MetallicSmoothnessOcclusion: {instanceID: 0}
+  - Normal: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
