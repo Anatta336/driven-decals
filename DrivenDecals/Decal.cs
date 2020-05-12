@@ -19,7 +19,7 @@ namespace SamDriver.Decal {
     public bool ShouldUseSceneStaticMeshes = true;
     public List<MeshFilter> MeshesToProjectAgainst = new List<MeshFilter>();
 
-    bool isMeshUnprojected = false;
+    [SerializeField] bool isMeshUnprojected = false;
 
     MeshFilter _meshFilter;
     MeshFilter meshFilter
