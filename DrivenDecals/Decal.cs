@@ -301,7 +301,11 @@ namespace SamDriver.Decal {
           if (!meshFilter.gameObject.isStatic) continue;
 
           // don't project against other decals
+          #if UNITY_2019_1_OR_NEWER
           if (meshFilter.gameObject.TryGetComponent<Decal>(out _)) continue;
+          #else
+          if (meshFilter.gameObject.GetComponent<Decal>() != null) continue;
+          #endif
 
           //NOTE: if you want to exclude other objects from "all static objects" here's the place to do it
 

@@ -11,7 +11,7 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 * Support for multi-object editing and undo.
 
 ## Key Limitations
-* Not suited for generating decals in real-time, not recommended as a way to dynamically place bullet holes.
+* Not suited for generating decals in real-time, so not recommended as a way to dynamically place bullet holes.
 * Inefficient compared to methods available to deferred renderers such as the high definition render pipeline (HDRP).
 
 ## Contents
@@ -29,14 +29,16 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 
 ## Getting Started
 ### Requirements
-* Unity 2018 or later, using the lightweight render pipeline (LWRP) or universal render pipeline (URP)
+* Unity 2019.3.0f6 or later, using the universal render pipeline (URP) version 7.2.1 or later.
+
+In theory it should work in the LWRP and Unity versions as far back as 2018. But it looks like shader graph really doesn't care about cross-version compatibility. If you need this to work in those earlier versions I may be able to put together something compatible with some extra work. 
 
 ### Installation
 1. Download [drivenDecals.unitypackage](https://github.com/Anatta336/driven-decals/raw/master/drivenDecals.unitypackage)
-2. Open your project in Unity (alternatively create a test project using the LWRP or URP template.)
-3. Drag the drivenDecals.unitypackage file into the "Project" window in Unity.
+2. Open your project in Unity (alternatively create a test project using the URP template.)
+3. Drag the drivenDecals.unitypackage file into the "Project" window in Unity, or use *Import Package* in the *Assets* top menu.
 4. Leave everything ticked and click Import.
-5. Don't rename or move the `Assets/DrivenDecals/Editor` directory, unfortunately Unity requires some hardcoded paths.
+5. Don't rename or move the `Assets/DrivenDecals/Editor` directory. Unfortunately Unity requires some hardcoded paths.
 
 ### Your First Decal
 You can create a decal object in your scene using either the right-click menu in the Hierarchy window or the GameObject menu. Look for *3D Object* → *Driven Decal*.
@@ -199,4 +201,3 @@ The source code of this project and associated documentation is licensed under t
 The included example assets are licensed under the Attribution 4.0 International [(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) licence.
 
 These licences mean you already have permission to use this in whatever project you like, including commercial releases. They place no obligation on you to release your source code. If you release something that makes use of this decal system a small acknowledgement in the credits would be appreciated, but is not required.
-
