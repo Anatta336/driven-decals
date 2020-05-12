@@ -11,7 +11,7 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 * Support for multi-object editing and undo.
 
 ## Key Limitations
-* Not suited for generating decals in real-time. not recommended as a way to dynamically place bullet holes.
+* Not suited for generating decals in real-time, not recommended as a way to dynamically place bullet holes.
 * Inefficient compared to methods available to deferred renderers such as the high definition render pipeline (HDRP).
 
 ## Contents
@@ -25,7 +25,7 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 * [Static Batching](#static-batching)
 * [Custom Shaders](#custom-shaders)
 * [High Definition Render Pipeline (HDRP)](#high-definition-render-pipeline)
-* [Licence](#licence))
+* [Licence](#licence)
 
 ## Getting Started
 ### Requirements
@@ -150,7 +150,7 @@ Doing things like changing a decal's opacity or even switching between DecalAsse
 
 To prevent name conflicts all the code used by this decal system is in the namespace `SamDriver.Decal`. So if your code needs to interact with it you may want to add a `using SamDriver.Decal;` at the top of your script's file.
 
-An [example script]("/DrivenDecals/Sample Scripts/DecalSpawner.cs") with plenty of comments that generates decals is included in the Sample Scripts directory.
+An [example script]("../blob/master/DrivenDecals/Sample Scripts/DecalSpawner.cs") with plenty of comments that generates decals is included in the Sample Scripts directory.
 
 ![Example decal spawner shown in the editor before spawning decals.](/documentation/images/spawnerBefore.png)
 ![Example decal spawner after creating a ring of decals projected against a sphere.](/documentation/images/spawnerAfter.png)
@@ -192,7 +192,7 @@ The process for generating the projected mesh has significant potential for opti
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_)
 
 ## Licence
-The source code of this project and associated documentation is licensed under the [MIT licence](../LICENCE.txt).
+The source code of this project and associated documentation is licensed under the [MIT licence](..blob/master/LICENCE.txt).
 
 The included example assets are licensed under the Attribution 4.0 International [(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) licence.
 
