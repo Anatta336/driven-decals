@@ -41,7 +41,7 @@ namespace SamDriver.Decal
     static DecalAsset FetchSampleDecalAsset()
     {
       return (DecalAsset)AssetDatabase.LoadAssetAtPath(
-        "Assets/DrivenDecals/Samples/Simple/Grid.asset",
+        "Assets/DrivenDecals/Sample Decals/Simple/Grid.asset",
         typeof(DecalAsset)
       );
     }
