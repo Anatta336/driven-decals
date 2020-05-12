@@ -150,7 +150,7 @@ Doing things like changing a decal's opacity or even switching between DecalAsse
 
 To prevent name conflicts all the code used by this decal system is in the namespace `SamDriver.Decal`. So if your code needs to interact with it you may want to add a `using SamDriver.Decal;` at the top of your script's file.
 
-An [example script](../blob/master/DrivenDecals/Sample%20Scripts/DecalSpawner.cs) with plenty of comments that generates decals is included in the Sample Scripts directory.
+An [example script](../master/DrivenDecals/Sample%20Scripts/DecalSpawner.cs) with plenty of comments that generates decals is included in the Sample Scripts directory.
 
 ![Example decal spawner shown in the editor before spawning decals.](/documentation/images/spawnerBefore.png)
 ![Example decal spawner after creating a ring of decals projected against a sphere.](/documentation/images/spawnerAfter.png)
@@ -192,7 +192,7 @@ The process for generating the projected mesh has significant potential for opti
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_)
 
 ## Licence
-The source code of this project and associated documentation is licensed under the [MIT licence](../blob/master/LICENCE.txt).
+The source code of this project and associated documentation is licensed under the [MIT licence](../master/LICENCE.txt).
 
 The included example assets are licensed under the Attribution 4.0 International [(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) licence.
 
