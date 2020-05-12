@@ -192,7 +192,7 @@ The process for generating the projected mesh has significant potential for opti
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_)
 
 ## Licence
-The source code of this project and associated documentation is licensed under the [MIT licence](../master/LICENCE.txt).
+The source code of this project and associated documentation is licensed under the [MIT licence](../master/LICENSE.txt).
 
 The included example assets are licensed under the Attribution 4.0 International [(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) licence.
 
