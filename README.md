@@ -128,6 +128,8 @@ A *DecalAsset* is an asset in your project. It decides how a decal will look by 
 
 To select what region of the source texture will be used in a *DecalAsset* you can use the mouse to drag a rectangle over the preview image, use the small buttons with arrows on them, or directly enter values for uMin, uMax, vMin, and vMax. Common practice is to start by using the mouse to select approximately the correct region and then use the clickable buttons to adjust it.
 
+An thumbnail icon representing the decal is automatically generated when you edit a *DecalAsset*, making it easier to navigate through a collection. The thumbnail uses the "preview background" colour to fill in transparent areas, so you may want to change that if the default makes your decal hard to see.
+
 ![The DecalAsset inspector showing a selected rectangular region within a texture](/documentation/images/decalAssetPencilA.png)
 
 You create a *DecalAsset* by right-clicking in the Project window and selecting *Create* → *Decal* → *Decal Asset*.
