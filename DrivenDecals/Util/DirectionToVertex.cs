@@ -6,7 +6,7 @@ namespace SamDriver.Decal
   {
     public Vertex start;
     public Vertex target;
-    public Vector3 direction;
+    public Float3 direction;
     public float distancetoTarget;
 
     public DirectionToVertex(Vertex start_, Vertex target_)
@@ -14,27 +14,20 @@ namespace SamDriver.Decal
       this.start = start_;
       this.target = target_;
 
-      Vector3 displacement = target_.decalPosition - start_.decalPosition;
-      this.distancetoTarget = displacement.magnitude;
+      var displacement = target_.Position - start_.Position;
+      this.distancetoTarget = displacement.Magnitude;
       this.direction = displacement / distancetoTarget;
     }
 
     public bool RoughlyParallel(DirectionToVertex other, float fuzziness = 0.001f)
     {
-      return VectorRoughlyEqual(this.direction, other.direction, fuzziness) ||
-        VectorRoughlyEqual(this.direction, other.direction * -1f, fuzziness);
+      return this.direction.IsNearlyEqual(other.direction, fuzziness) ||
+        this.direction.IsNearlyEqual(other.direction * -1f, fuzziness);
     }
 
     public bool RoughlyEqualDirection(DirectionToVertex other, float fuzziness = 0.001f)
     {
-      return VectorRoughlyEqual(this.direction, other.direction, fuzziness);
-    }
-
-    static bool VectorRoughlyEqual(Vector3 a, Vector3 b, float fuzziness = 0.001f)
-    {
-      return Mathf.Abs(a.x - b.x) < fuzziness &&
-        Mathf.Abs(a.y - b.y) < fuzziness &&
-        Mathf.Abs(a.z - b.z) < fuzziness;
+      return this.direction.IsNearlyEqual(other.direction, fuzziness);
     }
   }
 }

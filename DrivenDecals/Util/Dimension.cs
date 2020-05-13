@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace SamDriver.Decal
 {
   internal enum Dimension
@@ -5,5 +8,15 @@ namespace SamDriver.Decal
     x,
     y,
     z,
+  }
+
+  internal static class DimensionHelper
+  {
+    public static IEnumerable<Dimension> Enumerate()
+    {
+      yield return Dimension.x;
+      yield return Dimension.y;
+      yield return Dimension.z;
+    }
   }
 }

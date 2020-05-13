@@ -1,109 +1,87 @@
 using UnityEngine;
-using System.Collections;
+using Unity.Collections;
+using Unity.Jobs;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections;
+using System.IO;
+using System.Threading.Tasks;
 using System.Linq;
 
 namespace SamDriver.Decal
 {
-  internal class Triangle : IEnumerable<Vertex>
+  internal struct Triangle : IEnumerable<Vertex>
   {
-    protected Vertex[] vertices;
+    [ReadOnly]
+    public readonly Vertex A, B, C;
 
-    // indexer for array access
-    public Vertex this[int vertexIndex]
+    /// <summary>
+    /// The normal of the plane defined by this triangle. Note this may not be equal to the
+    /// normal(s) stored on the vertices that make up this triangle.
+    /// </summary>
+    public Float3 GeometryNormal
     {
-      get => vertices[vertexIndex];
-    }
-
-    public IEnumerable<Edge> GetEdges()
-    {
-      Edge[] edges = new Edge[vertices.Length];
-      for (int i = 0; i < edges.Length; ++i)
+      get
       {
-        edges[i] = new Edge(vertices[i], vertices[(i + 1) % vertices.Length]);
+        if (!_geometryNormal.HasValue)
+        {
+          _geometryNormal = Float3.CrossProduct(
+            B.Position - A.Position,
+            C.Position - A.Position
+          );
+
+        }
+        return _geometryNormal.Value;
       }
-      
-      return edges.AsEnumerable();
     }
-    
+    Float3? _geometryNormal;
+
+    #region constructors
+    public Triangle(
+      Vertex a_, Vertex b_, Vertex c_)
+    {
+      this.A = a_;
+      this.B = b_;
+      this.C = c_;
+      _geometryNormal = null;
+    }
+    #endregion
+
+    #region enumerators
     public IEnumerator<Vertex> GetEnumerator()
     {
-      for (int i = 0; i < vertices.Length; ++i)
-      {
-        yield return vertices[i];
-      }
+      yield return A;
+      yield return B;
+      yield return C;
     }
     IEnumerator IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
     }
 
-    /// <summary>
-    /// The normal of the plane defined by this triangle. Note this may not be equal to the
-    /// normal stored on the vertices that make up this triangle. In addition the vertices may
-    /// each have different normals.
-    /// </summary>
-    public Vector3 GeometryNormal
+    public IEnumerable<Edge> EnumerateEdges()
     {
-      get
-      {
-        if (!_normal.HasValue)
-        {
-          _normal = Vector3.Cross(
-            vertices[1].decalPosition - vertices[0].decalPosition,
-            vertices[2].decalPosition - vertices[0].decalPosition
-          ).normalized;
-        }
-        return _normal.Value;
-      }
+      yield return new Edge(A, B);
+      yield return new Edge(B, C);
+      yield return new Edge(C, A);
     }
-    Vector3? _normal;
+    #endregion
 
-    public Triangle(Vertex v0, Vertex v1, Vertex v2)
-    {
-      vertices = new Vertex[] { v0, v1, v2 };
-    }
-
-    /// <summary>
-    /// Given an yz position find z on the plane defined by this triangle.
-    /// </summary>
-    public float getXAtYZ(float y, float z)
-    {
-      // we have a plane defined by this triangle, and just need to find y given xz
-      return (Vector3.Dot(GeometryNormal, vertices[0].decalPosition) - GeometryNormal.y * y - GeometryNormal.z * z) / GeometryNormal.x;
-    }
-
-    /// <summary>
-    /// Given an xz position find y on the plane defined by this triangle.
-    /// </summary>
-    public float getYAtXZ(float x, float z)
-    {
-      // we have a plane defined by this triangle, and just need to find y given xz
-      return (Vector3.Dot(GeometryNormal, vertices[0].decalPosition) - GeometryNormal.x * x - GeometryNormal.z * z) / GeometryNormal.y;
-    }
-
-    /// <summary>
-    /// Given an xy position find z on the plane defined by this triangle.
-    /// </summary>
-    public float GetZAtXY(float x, float y)
-    {
-      // we have a plane defined by this triangle, and just need to find z given xy
-      return (Vector3.Dot(GeometryNormal, vertices[0].decalPosition) - GeometryNormal.x * x - GeometryNormal.y * y) / GeometryNormal.z;
-    }
-
+    #region methods
     /// <summary>
     /// Tests if a line defined by a y and z coordinate pair intersects this triangle.
     /// Equivalent to projecting the triangle onto the yz plane and testing for a point being inside.
     /// </summary>
     public bool IsAxialXLineWithin(float y, float z)
     {
-      // projecting the triangle onto yz plane just means setting x components to zero
-      Vector3 projectedA = new Vector3(0f, vertices[0].decalPosition.y, vertices[0].decalPosition.z);
-      Vector3 projectedB = new Vector3(0f, vertices[1].decalPosition.y, vertices[1].decalPosition.z);
-      Vector3 projectedC = new Vector3(0f, vertices[2].decalPosition.y, vertices[2].decalPosition.z);
-      Vector3 P = new Vector3(0f, y, z);
-
-      return IsProjectedVertexWithinTriangle(projectedA, projectedB, projectedC, P);
+      // projecting the triangle onto local yz plane just means setting x components to zero
+      return IsProjectedVertexWithinTriangle(
+        Float3.SetXZero(A.Position),
+        Float3.SetXZero(B.Position),
+        Float3.SetXZero(C.Position),
+        new Float3(0f, y, z)
+      );
     }
 
     /// <summary>
@@ -112,13 +90,13 @@ namespace SamDriver.Decal
     /// </summary>
     public bool IsAxialYLineWithin(float x, float z)
     {
-      // projecting the triangle onto xz plane just means setting y components to zero
-      Vector3 projectedA = new Vector3(vertices[0].decalPosition.x, 0f, vertices[0].decalPosition.z);
-      Vector3 projectedB = new Vector3(vertices[1].decalPosition.x, 0f, vertices[1].decalPosition.z);
-      Vector3 projectedC = new Vector3(vertices[2].decalPosition.x, 0f, vertices[2].decalPosition.z);
-      Vector3 P = new Vector3(x, 0f, z);
-
-      return IsProjectedVertexWithinTriangle(projectedA, projectedB, projectedC, P);
+      // projecting the triangle onto local xz plane just means setting y components to zero
+      return IsProjectedVertexWithinTriangle(
+        Float3.SetYZero(A.Position),
+        Float3.SetYZero(B.Position),
+        Float3.SetYZero(C.Position),
+        new Float3(x, 0f, z)
+      );
     }
 
     /// <summary>
@@ -127,67 +105,97 @@ namespace SamDriver.Decal
     /// </summary>
     public bool IsAxialZLineWithin(float x, float y)
     {
-      // projecting the triangle onto xy plane just means setting z components to zero
-      Vector3 projectedA = new Vector3(vertices[0].decalPosition.x, vertices[0].decalPosition.y, 0f);
-      Vector3 projectedB = new Vector3(vertices[1].decalPosition.x, vertices[1].decalPosition.y, 0f);
-      Vector3 projectedC = new Vector3(vertices[2].decalPosition.x, vertices[2].decalPosition.y, 0f);
-      Vector3 P = new Vector3(x, y, 0f);
+      // projecting the triangle onto local xy plane just means setting z components to zero
+      return IsProjectedVertexWithinTriangle(
+        Float3.SetZZero(A.Position),
+        Float3.SetZZero(B.Position),
+        Float3.SetZZero(C.Position),
+        new Float3(x, y, 0f)
+      );
+    }
 
-      return IsProjectedVertexWithinTriangle(projectedA, projectedB, projectedC, P);
+    /// <summary>
+    /// Given an yz position find z on the plane defined by this triangle.
+    /// </summary>
+    public float getXAtYZ(float y, float z)
+    {
+      // we have a plane defined by this triangle, and just need to find y given xz
+      return (Float3.DotProduct(GeometryNormal, A.Position) - 
+        GeometryNormal.y * y - GeometryNormal.z * z)
+        / GeometryNormal.x;
+    }
+
+    /// <summary>
+    /// Given an xz position find y on the plane defined by this triangle.
+    /// </summary>
+    public float getYAtXZ(float x, float z)
+    {
+      // we have a plane defined by this triangle, and just need to find y given xz
+      return (Float3.DotProduct(GeometryNormal, A.Position) -
+        GeometryNormal.x * x - GeometryNormal.z * z)
+        / GeometryNormal.y;
+    }
+
+    /// <summary>
+    /// Given an xy position find z on the plane defined by this triangle.
+    /// </summary>
+    public float GetZAtXY(float x, float y)
+    {
+      // we have a plane defined by this triangle, and just need to find z given xy
+      return (Float3.DotProduct(GeometryNormal, A.Position) - 
+        GeometryNormal.x * x - GeometryNormal.y * y)
+        / GeometryNormal.z;
     }
 
     /// <summary>
     /// Note! Assumes the given point is within the triangle.
     /// </summary>
-    public Vector3 InterpolateNormal(Vector3 targetPoint)
+    public Float3 InterpolateNormal(Float3 targetPoint)
     {
-      // given triangle ABC and point P
-      Vector3 A = vertices[0].decalPosition;
-      Vector3 B = vertices[1].decalPosition;
-      Vector3 C = vertices[2].decalPosition;
-
-      Vector3 u = B - A;
-      Vector3 v = C - A;
-      Vector3 n = Vector3.Cross(u, v);
-      Vector3 w = targetPoint - A;
+      Float3 u = B.Position - A.Position;
+      Float3 v = C.Position - A.Position;
+      Float3 n = Float3.CrossProduct(u, v);
+      Float3 w = targetPoint - A.Position;
 
       // barycentric coordinates of the projection P' of P to plane of triangle
-      float nMagnitudeSquared = n.sqrMagnitude;
-      float gamma = Vector3.Dot(Vector3.Cross(u, w), n) / nMagnitudeSquared;
-      float beta = Vector3.Dot(Vector3.Cross(w, v), n) / nMagnitudeSquared;
+      float gamma = Float3.DotProduct(Float3.CrossProduct(u, w), n) / n.MagnitudeSquared;
+      float beta = Float3.DotProduct(Float3.CrossProduct(w, v), n) / n.MagnitudeSquared;
       float alpha = 1f - gamma - beta;
 
-      //TODO: check that the maths of this holds up
-      // normal = α*normalA + β*normalB + (1 - α - β)*normalC
-      // so long as point is within triangle, γ = (1 - α - β)
-      Vector3 interpolated = alpha * vertices[0].decalNormal +
-        beta * vertices[1].decalNormal +
-        gamma * vertices[2].decalNormal;
-      interpolated.Normalize();
-      return interpolated;
+      // normalP = α*normalA + β*normalB + γ*normalC
+      Float3 interpolated =
+        alpha * A.Normal +
+        beta * B.Normal +
+        gamma * C.Normal;
+      return Float3.Normalize(interpolated);
     }
+    #endregion
 
+    #region static methods
     public static bool IsProjectedVertexWithinTriangle(
-      Vector3 A, Vector3 B, Vector3 C, Vector3 P)
+      Float3 A, Float3 B, Float3 C, Float3 P)
     {
       // given triangle ABC and point P
-      Vector3 u = B - A;
-      Vector3 v = C - A;
-      Vector3 n = Vector3.Cross(u, v);
-      Vector3 w = P - A;
+      Float3 u = B - A;
+      Float3 v = C - A;
+      Float3 n = Float3.CrossProduct(u, v);
+      Float3 w = P - A;
 
       // barycentric coordinates of the projection P' of P to plane of triangle
-      float nMagnitudeSquared = n.sqrMagnitude;
-      float gamma = Vector3.Dot(Vector3.Cross(u, w), n) / nMagnitudeSquared;
-      float beta = Vector3.Dot(Vector3.Cross(w, v), n) / nMagnitudeSquared;
+      float gamma = Float3.DotProduct(Float3.CrossProduct(u, w), n) / n.MagnitudeSquared;
+      float beta = Float3.DotProduct(Float3.CrossProduct(w, v), n) / n.MagnitudeSquared;
 
       //NOTE: alpha is only a correct barycentric coordinate if point is within triangle
       float alpha = 1f - gamma - beta;
+
+      // for reference: alpha is the weight of A, beta weight of B, gamma weight of C
 
       // P' is within triangle if barycentric coordinates are all in range 0 to 1
       return (alpha >= 0f) && (alpha <= 1f) &&
         (beta >= 0f) && (beta <= 1f) &&
         (gamma >= 0f) && (gamma <= 1f);
     }
+    #endregion
   }
+
 }

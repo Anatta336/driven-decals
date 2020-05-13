@@ -1,32 +1,51 @@
 using UnityEngine;
+using Unity.Collections;
+using Unity.Jobs;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections;
+using System.IO;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace SamDriver.Decal
 {
   internal struct Vertex
   {
-    public Vector3 decalPosition;
-    public Vector3 projectedDecalPosition;
-    public Vector3 decalNormal;
+    [ReadOnly]
+    public Float3 Position;
+    [ReadOnly]
+    public Float3 Normal;
 
-    public override bool Equals(object obj) 
+    #region constructors
+    public Vertex(Float3 position_, Float3 normal_)
     {
-      if (!(obj is Vertex)) return false;
-
-      Vertex other = (Vertex)obj;
-      return (this.decalPosition == other.decalPosition &&
-        this.decalNormal == other.decalNormal);
+      this.Position = position_;
+      this.Normal = normal_;
     }
+    #endregion
 
-    public bool EqualPosition(Vertex other)
+    #region static methods
+    public static Vertex CreateFromExisting(Vertex a, Vertex b, float tFromAToB)
     {
-      return this.decalPosition == other.decalPosition;
-    }
+      tFromAToB = Mathf.Clamp01(tFromAToB);
+      
+      Float3 createdPosition = Float3.Lerp(a.Position, b.Position, tFromAToB);
 
-    public override int GetHashCode()
-    {
-      return decalPosition.GetHashCode();
-    }
+      // spherical linear interpolation is probably more correct,
+      // but I think linear interpolation gives more consistency with rendering
+      Float3 createdNormal = Float3.Normalize(Float3.Lerp(a.Normal, b.Normal, tFromAToB));
 
+      return new Vertex(createdPosition, createdNormal);
+    }
+    #endregion
+
+  }
+
+  /*
+  internal struct Vertex
+  {
     public static Vertex CreateFromMesh(
       Vector3 meshVertexPosition, Vector3 meshVertexNormal,
       Transform meshTransform, Transform decalTransform)
@@ -95,4 +114,5 @@ namespace SamDriver.Decal
       );
     }
   }
+  */
 }

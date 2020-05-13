@@ -214,7 +214,7 @@ namespace SamDriver.Decal {
       List<Vector2> uvs = new List<Vector2>();
       List<Vector3> normals = new List<Vector3>();
       List<Vector4> tangents = new List<Vector4>();
-      foreach (Vector2 corner in Square.CenteredUnitSquareCorners)
+      foreach (var corner in Square.CenteredUnitSquareCorners)
       {
         positions.Add(new Vector3(corner.x, corner.y, -0.5f));
         uvs.Add(new Vector2(corner.x + 0.5f, corner.y + 0.5f));
@@ -340,8 +340,8 @@ namespace SamDriver.Decal {
       Gizmos.color = Color.grey;
       for (int i = 0; i < Square.CornerCount; ++i)
       {
-        Vector2 v0 = Square.CenteredUnitSquareCorners[i];
-        Vector2 v1 = Square.CenteredUnitSquareCorners[(i + 1) % Square.CornerCount];
+        Float2 v0 = Square.CenteredUnitSquareCorners[i];
+        Float2 v1 = Square.CenteredUnitSquareCorners[(i + 1) % Square.CornerCount];
 
         // back
         Gizmos.DrawLine(
