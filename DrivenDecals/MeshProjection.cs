@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace SamDriver.Decal
 {
-  public static class MeshProjection
+  public class MeshProjection
   {
     const int maxUInt16VertexCount = 65534; // slightly less than UInt16.MaxValue
 
@@ -20,6 +20,7 @@ namespace SamDriver.Decal
     // That happens when every triangle edge crosses the decal cube's borders twice.
     const int maxTrianglesFromTrimmedTriangle = 5;
 
+    #region helper structs
     struct RawMesh : IDisposable
     {
       [ReadOnly]
@@ -134,27 +135,81 @@ namespace SamDriver.Decal
         }
       }
     }
+    #endregion
 
-    /// <summary>
-    /// Create a decal mesh, projected against the MeshesToProjectAgainst.
-    /// Throws DecalException if there are no MeshesToProjectAgainst.
-    /// You should check HasMeshToProjectAgainst before calling PerformProjection.
-    /// </summary>
-    public static UnityEngine.Mesh GenerateProjectedDecalMesh(
-      IEnumerable<MeshFilter> meshFilters,
-      Transform decalTransform)
+
+    public bool IsReadyToComplete
     {
-      var allResultingTriangles = new List<NativeArray<UpToFiveTriangles>>();
-      var trimJobHandles = new List<JobHandle>();
-      var rawMeshes = new List<RawMesh>();
+      get => trimJobHandles != null && trimJobHandles.All(handle => handle.IsCompleted);
+    }
 
+    IEnumerable<MeshFilter> meshFilters;
+    Transform decalTransform;  
+    bool expectToTakeMoreThanFourFrames;
+
+    List<RawMesh> rawMeshes;
+    List<NativeArray<UpToFiveTriangles>> allResultingTriangles;
+    List<JobHandle> trimJobHandles;
+
+    public MeshProjection(
+      IEnumerable<MeshFilter> meshFilters_,
+      Transform decalTransform_,
+      bool expectToTakeMoreThanFourFrames_ = false)
+    {
+      this.meshFilters = meshFilters_;
+      this.decalTransform = decalTransform_;
+      this.expectToTakeMoreThanFourFrames = expectToTakeMoreThanFourFrames_;
+      Begin();
+    }
+
+    void Begin()
+    {
+      rawMeshes = new List<RawMesh>();
+      allResultingTriangles = new List<NativeArray<UpToFiveTriangles>>();
+      trimJobHandles = new List<JobHandle>();
+
+      // begin jobs
+      ScheduleTrimJobs(ref rawMeshes, ref allResultingTriangles, ref trimJobHandles, decalTransform, meshFilters, expectToTakeMoreThanFourFrames);
+    }
+
+    public void Abort()
+    {
+      // even though we don't need their work, we have to call Complete to give
+      // the main thread ownership of NativeArrays ready for their disposal
+      foreach (var jobHandle in trimJobHandles) jobHandle.Complete();
+      foreach (var resultingTriangles in allResultingTriangles) resultingTriangles.Dispose();
+      rawMeshes.ForEach(rawMesh => rawMesh.Dispose());
+    }
+
+    public UnityEngine.Mesh Complete()
+    {
+      // require jobs to complete, pausing main thread until they do
+      var resultantTriangles = ReceiveTrimResults(allResultingTriangles, trimJobHandles).ToList();
+
+      // clean up
+      foreach (var resultingTriangles in allResultingTriangles) resultingTriangles.Dispose();
+      rawMeshes.ForEach(rawMesh => rawMesh.Dispose());
+
+      // use generated triangles to make a Unity mesh
+      return BuildMesh(resultantTriangles);
+    }
+
+    static void ScheduleTrimJobs(
+      ref List<RawMesh> rawMeshes,
+      ref List<NativeArray<UpToFiveTriangles>> allResultingTriangles,
+      ref List<JobHandle> trimJobHandles,
+      Transform decalTransform,
+      IEnumerable<MeshFilter> meshFilters,
+      bool shouldUsePersistentAllocation = false
+    )
+    {
       // directly accessing the Mesh data is only possible on primary thread, so
       // get all that accessing done here and packed into NativeArrays
       foreach (var meshFilter in meshFilters)
       {
         // Allocator.TempJob expects to last for <= 4 frames
         // Allocator.Persistent can last indefinitely
-        var allocator = Allocator.TempJob;
+        var allocator = shouldUsePersistentAllocation ? Allocator.Persistent : Allocator.TempJob;
 
         // mesh as read from meshFilter is defined in that object's local space
         var mesh = meshFilter.sharedMesh;
@@ -186,35 +241,55 @@ namespace SamDriver.Decal
         // if we were waiting until next frame (or longer) then probably best not to call this
         JobHandle.ScheduleBatchedJobs();
       }
+    }
 
-      var resultantTriangles = new List<Triangle>();
+    /// <summary>
+    /// Enforces the completion of all jobs handled by trimJobHandles.
+    /// </summary>
+    static IEnumerable<Triangle> ReceiveTrimResults(
+      List<NativeArray<UpToFiveTriangles>> allResultingTriangles,
+      List<JobHandle> trimJobHandles
+    )
+    {
       for (int i = 0; i < allResultingTriangles.Count; ++i)
       {
         trimJobHandles[i].Complete();
         // we now know that the job is completed, and have regained ownership of the NativeArray<Triangle>
 
         var resultingTriangles = allResultingTriangles[i];
-        int count = 0;
         foreach (var severalTriangles in resultingTriangles)
         {
           foreach (var triangle in severalTriangles)
           {
-            resultantTriangles.Add(triangle);
-            ++count;
+            yield return triangle;
           }
         }
-
-        resultingTriangles.Dispose();
       }
+    }
 
-      // now that all jobs are completed, can safely dispose of meshes too
+    /// <summary>
+    /// Immediately create a projected decal mesh, using the given meshFilters.
+    /// </summary>
+    public static UnityEngine.Mesh GenerateProjectedDecalMesh(
+      IEnumerable<MeshFilter> meshFilters,
+      Transform decalTransform)
+    {
+      var rawMeshes = new List<RawMesh>();
+      var allResultingTriangles = new List<NativeArray<UpToFiveTriangles>>();
+      var trimJobHandles = new List<JobHandle>();
+
+      // begin jobs
+      ScheduleTrimJobs(ref rawMeshes, ref allResultingTriangles, ref trimJobHandles, decalTransform, meshFilters, false);
+
+      // immediately require jobs to complete, pausing main thread until they do
+      var resultantTriangles = ReceiveTrimResults(allResultingTriangles, trimJobHandles).ToList();
+
+      // clean up
+      foreach (var resultingTriangles in allResultingTriangles) resultingTriangles.Dispose();
       rawMeshes.ForEach(rawMesh => rawMesh.Dispose());
 
+      // use generated triangles to make a Unity mesh
       return BuildMesh(resultantTriangles);
-      
-      // easiest organisation is to have the completion of work forced to happen here,
-      // but would be good to provide functionality to spread that over several frames.
-      // If spread, will need something checking every Update() if it's done.
     }
 
     static void TransformPointsFromLocalAToLocalB(

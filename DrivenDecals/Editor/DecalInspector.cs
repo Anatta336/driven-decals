@@ -69,7 +69,7 @@ namespace SamDriver.Decal
           {
             if (item.HasMeshToProjectAgainst)
             {
-              item.GenerateProjectedMesh();
+              item.GenerateProjectedMeshImmediate();
             }
           }
         }

@@ -79,9 +79,13 @@ public class DecalSpawner : MonoBehaviour
     decal.ShouldUseSceneStaticMeshes = false;
     decal.MeshesToProjectAgainst = this.MeshesToProjectAgainst;
 
-    // perform the projection
-    // this step is embarassingly slow, doing it during gameplay is a bad idea
-    decal.GenerateProjectedMesh();
+    if (decal.HasMeshToProjectAgainst)
+    {
+      // begin to perform the projection
+      // if you want the decal mesh to be generated use GenerateProjectedMeshImmediate,
+      // but beware it can easily lock up the main thread and cause skipped frames.
+      decal.GenerateProjectedMeshDelayed();
+    }
 
     return decal;
   }

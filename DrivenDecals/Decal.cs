@@ -19,6 +19,12 @@ namespace SamDriver.Decal {
     public bool ShouldUseSceneStaticMeshes = true;
     public List<MeshFilter> MeshesToProjectAgainst = new List<MeshFilter>();
 
+    public bool IsAwaitingProjectionResult
+    {
+      get => projectionInProgress != null;
+    }
+    MeshProjection projectionInProgress;
+
     [SerializeField] bool isMeshUnprojected = false;
 
     MeshFilter _meshFilter;
@@ -86,6 +92,15 @@ namespace SamDriver.Decal {
       SetupMaterialPropertyBlock();
     }
 
+    void OnDisable()
+    {
+      if (projectionInProgress != null)
+      {
+        projectionInProgress.Abort();
+        projectionInProgress = null;
+      }
+    }
+
     void EnforcePositiveScale()
     {
       if (transform.localScale.x < 0f)
@@ -114,14 +129,17 @@ namespace SamDriver.Decal {
       }
     }
     
-    // assume DecalAsset will not change during runtime, so only automatically update when in editor
-    // If DecalAsset does change during runtime you should call SetupMaterialPropertyBlock()
-    #if UNITY_EDITOR
     void Update()
     {
+      if (projectionInProgress != null && projectionInProgress.IsReadyToComplete)
+      {
+        ReceiveProjectionResult();
+      }
+
+      #if UNITY_EDITOR
       SetupMaterialPropertyBlock();
+      #endif
     }
-    #endif
 
     /// <summary>
     /// Sets appropriate Material on object's MeshRenderer and uses a MaterialPropertyBlock
@@ -251,7 +269,7 @@ namespace SamDriver.Decal {
     /// Create a mesh that represents the decal having been projected against the target mesh(es).
     /// The created mesh is set as this object's MeshFilter's current mesh.
     /// </summary>
-    public void GenerateProjectedMesh()
+    public void GenerateProjectedMeshImmediate()
     {
       if (!HasMeshToProjectAgainst)
       {
@@ -266,6 +284,48 @@ namespace SamDriver.Decal {
       EnforcePositiveScale();
 
       meshFilter.mesh = MeshProjection.GenerateProjectedDecalMesh(WorldMeshFilters(), this.transform);
+      isMeshUnprojected = false;
+
+      #if UNITY_EDITOR
+      // if we're part of a prefab need to report change through PrefabUtility for undo etc to work correctly
+      if (UnityEditor.PrefabUtility.IsPartOfAnyPrefab(this))
+      {
+        UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+        UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(meshFilter);
+      }
+      #endif
+    }
+
+    /// <summary>
+    /// Performs the same operation as GenerateProjectedMesh but allows it to be spread
+    /// over several frames.
+    /// </summary>
+    public void GenerateProjectedMeshDelayed(bool expectToTakeMoreThanFourFrames = false)
+    {
+      if (projectionInProgress != null)
+      {
+        // already in progress
+        return;
+      }
+      if (!HasMeshToProjectAgainst)
+      {
+        throw new DecalException($"Projecting a {nameof(Decal)} requires at least one target mesh to project against.");
+      }
+
+      EnforcePositiveScale();
+
+      projectionInProgress = new MeshProjection(WorldMeshFilters(), this.transform, expectToTakeMoreThanFourFrames);
+    }
+
+    void ReceiveProjectionResult()
+    {
+      #if UNITY_EDITOR
+      UnityEditor.Undo.RecordObjects(
+        new UnityEngine.Object[] {this, meshFilter}, "project decal mesh");
+      #endif
+
+      meshFilter.mesh = projectionInProgress.Complete();
+      projectionInProgress = null;
       isMeshUnprojected = false;
 
       #if UNITY_EDITOR
