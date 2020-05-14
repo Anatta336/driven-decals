@@ -18,6 +18,7 @@ namespace SamDriver.Decal {
     public float MaxAngleFadeDegrees = 85f;
     public bool IsFlipU = false;
     public bool IsFlipV = false;
+    public int DrawOrder = 0;
     public bool ShouldUseSceneStaticMeshes = true;
     public List<MeshFilter> MeshesToProjectAgainst = new List<MeshFilter>();
 
@@ -57,6 +58,7 @@ namespace SamDriver.Decal {
     static int maxAngleFadeRadiansID = Shader.PropertyToID("_MaxAngleFadeRadians");
     static int flipUID = Shader.PropertyToID("_FlipU");
     static int flipVID = Shader.PropertyToID("_FlipV");
+    static int zNudgeID = Shader.PropertyToID("_ZNudge");
 
     public bool IsGeneratedMeshEmpty
     {
@@ -164,6 +166,8 @@ namespace SamDriver.Decal {
       materialPropertyBlock.SetFloat(maxAngleFadeRadiansID, MaxAngleFadeDegrees * Mathf.Deg2Rad);
       materialPropertyBlock.SetInt(flipUID, IsFlipU ? 1 : 0);
       materialPropertyBlock.SetInt(flipVID, IsFlipV ? 1 : 0);
+      
+      meshRenderer.sortingOrder = DrawOrder;
 
       meshRenderer.SetPropertyBlock(materialPropertyBlock);
     }

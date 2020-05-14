@@ -14,6 +14,9 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 * Decal generation is relatively slow, so not recommended as a way to dynamically place bullet holes during gameplay.
 * Inefficient compared to methods available to deferred renderers such as the high definition render pipeline (HDRP).
 
+## Changelog
+[Human-friendly changelog](CHANGELOG.md)
+
 ## Contents
 * [Getting Started](#getting-started)
 * [Creating Your Own Decals](#creating-your-own-decals)
@@ -144,6 +147,11 @@ The "Z Fade Distance" setting allows you to make the decal fade away when near i
 
 ![Decal with angle fade values set lower and close together, causing more of the decal to be hidden and to have a sharp fade transition](/documentation/images/angleFadeNarrow.png)
 *Angle Fade set to smaller and closer values*
+
+#### Draw Order
+When multiple decals are projected against the same surface it's useful to be able to decide which is drawn on top. Whichever decal has the highest draw order will appear on top. When the draw order is equal Unity's default sorting will usually mean whichever decal's center point is nearer to the camera will appear on top.
+
+This custom draw order is implemented as a modification to the decal's `meshRenderer.sortingOrder`, which is part of the same system as the "Render Queue" value that can be set on Materials.
 
 ### DecalAsset
 A *DecalAsset* is an asset in your project. It decides how a decal will look by defining a rectangular region on the source texture, and by referring to a *Material* that does the rendering. You can have many *DecalAssets* all using the same *Material*.

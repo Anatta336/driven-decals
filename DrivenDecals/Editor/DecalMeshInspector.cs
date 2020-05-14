@@ -14,6 +14,7 @@ namespace SamDriver.Decal
     SerializedProperty isFlipV;
     SerializedProperty minAngleFadeDegrees;
     SerializedProperty maxAngleFadeDegrees;
+    SerializedProperty drawOrder;
     SerializedProperty shouldUseAllSceneStaticMeshes;
     SerializedProperty meshesToProjectAgainst;
 
@@ -26,6 +27,7 @@ namespace SamDriver.Decal
       isFlipV = serializedObject.FindProperty(nameof(DecalMesh.IsFlipV));
       minAngleFadeDegrees = serializedObject.FindProperty(nameof(DecalMesh.MinAngleFadeDegrees));
       maxAngleFadeDegrees = serializedObject.FindProperty(nameof(DecalMesh.MaxAngleFadeDegrees));
+      drawOrder = serializedObject.FindProperty(nameof(DecalMesh.DrawOrder));
       shouldUseAllSceneStaticMeshes = serializedObject.FindProperty(nameof(DecalMesh.ShouldUseSceneStaticMeshes));
       meshesToProjectAgainst = serializedObject.FindProperty(nameof(DecalMesh.MeshesToProjectAgainst));
     }
@@ -47,6 +49,7 @@ namespace SamDriver.Decal
       ScaleToMatchButtonGUI(primaryItem, items, isEditingMultipleObjects);
       DecalPickerGUI(primaryItem, items, isEditingMultipleObjects);
       OpacityOptionsGUI();
+      DrawOrderOptionsGUI();
       FlipOptionsGUI();
       TargetMeshesGUI();
 
@@ -168,7 +171,7 @@ namespace SamDriver.Decal
     void OpacityOptionsGUI()
     {
       EditorGUILayout.Slider(opacity, 0f, 1f, "Opacity");
-      EditorGUILayout.Slider(zFadeDistance, 0f, 1f, "Z Fade Distance");
+      EditorGUILayout.Slider(zFadeDistance, 0f, 1f, "zFade Distance");
 
       float min = minAngleFadeDegrees.floatValue;
       float max = maxAngleFadeDegrees.floatValue;
@@ -184,6 +187,11 @@ namespace SamDriver.Decal
         EditorGUILayout.PropertyField(isFlipU, new GUIContent("Flip Horizontal"));
         EditorGUILayout.PropertyField(isFlipV, new GUIContent("Flip Vertical"));
       }
+    }
+
+    void DrawOrderOptionsGUI()
+    {
+      EditorGUILayout.IntSlider(drawOrder, 0, 100, "Draw Order");
     }
 
     void TargetMeshesGUI()
