@@ -125,6 +125,15 @@ Decals can be projected against any mesh in the scene, not just static meshes. B
 
 Be aware that the decal is projected against the mesh in the state that it's stored. The target object's scale and rotation are accounted for, but if the target mesh is undergoing bone-based animation or other distortion by a vertex shader these effects will **not** be present in the projected decal. Similarly if you're using geometry shaders the decal projection process will not be aware of any generated faces.
 
+#### zFade
+The "Z Fade Distance" setting allows you to make the decal fade away when near its local z-axis bounds. A higher value fades over a longer distance, with a value of zero disabling the effect and causing a hard edge. The zFade value is given as a proportion of the decal's size in the local z-axis.
+
+![A decal with zFade disabled](/documentation/images/zFadeZero.png)
+*zFade disabled*
+
+![A decal with zFade set to 0.2, giving a soft fading effect near the decal region's z border](/documentation/images/zFadePointTwo.png)
+*zFade set to 0.2*
+
 ### DecalAsset
 A *DecalAsset* is an asset in your project. It decides how a decal will look by defining a rectangular region on the source texture, and by referring to a *Material* that does the rendering. You can have many *DecalAssets* all using the same *Material*.
 
@@ -176,9 +185,8 @@ The decal system looks for certain named properties on decal materials, which yo
 
 These properties are recommended as certain features will not work without them, but the system as a whole will cope if they're missing:
 * `_Opacity` Float in range 0 to 1 to uniformly fade out the decal, with 0 being hidden.
-* `_FlipU` Boolean to flip the texture region in the U axis. The *Decal UV* subgraph can do this for you.
-* `_FlipV` Boolean to flip the texture region in the V axis. The *Decal UV* subgraph can do this for you.
-* `_ZFadeStart` Float in range 0 to 1 to fade out the decal as it gets near the Z axis limits of its region. The *Fade near z bounds* subgraph can help achieve this effect.
+* `_FlipU` and `_FlipV` Booleans to flip the texture region. The *Decal UV* subgraph can do this for you.
+* `_ZFadeStart` Float in range 0 to 1 to fade out the decal as it gets near the Z axis limits of its region. The *Fade near z bounds* subgraph will achieve this effect.
 
 The *DecalAsset* inspector will inform you if you use a material that's lacking any of these properties.
 
