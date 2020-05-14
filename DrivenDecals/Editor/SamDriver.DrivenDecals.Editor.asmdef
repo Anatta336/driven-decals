@@ -1,0 +1,17 @@
+{
+    "name": "SamDriver.DrivenDecals.Editor",
+    "references": [
+        "GUID:22b65885038b8ac4fb6e944d0774c114"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
