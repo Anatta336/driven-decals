@@ -108,6 +108,11 @@ namespace SamDriver.Decal
     );
     public static Float3 operator *(float a, Float3 b) => b * a;
     public static Float3 operator /(Float3 a, float b) => a * (1f / b);
+    public static Float3 operator *(Float3 a, Float3 b) => new Float3(
+      a.x * b.x,
+      a.y * b.y,
+      a.z * b.z
+    );
 
     // not a complete set of everything you could do with a Float3, just what's needed here
     #endregion

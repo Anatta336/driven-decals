@@ -191,7 +191,7 @@ namespace SamDriver.Decal
       rawMeshes.ForEach(rawMesh => rawMesh.Dispose());
 
       // use generated triangles to make a Unity mesh
-      return BuildMesh(resultantTriangles);
+      return BuildMesh(resultantTriangles, new Float3(decalTransform.localScale));
     }
 
     static void ScheduleTrimJobs(
@@ -289,7 +289,7 @@ namespace SamDriver.Decal
       rawMeshes.ForEach(rawMesh => rawMesh.Dispose());
 
       // use generated triangles to make a Unity mesh
-      return BuildMesh(resultantTriangles);
+      return BuildMesh(resultantTriangles, new Float3(decalTransform.localScale));
     }
 
     static void TransformPointsFromLocalAToLocalB(
@@ -313,9 +313,11 @@ namespace SamDriver.Decal
     {
       for (int i = 0; i < directions.Length; ++i)
       {
-        Vector3 localA = directions[i].AsVector3;
-        Vector3 world = transformA.TransformDirection(directions[i].AsVector3);
-        Vector3 localB = transformB.InverseTransformDirection(world);
+        Quaternion aToWorld = transformA.rotation;
+        Quaternion worldToB = Quaternion.Inverse(transformB.rotation);
+        Quaternion aToB = worldToB * aToWorld;
+
+        Vector3 localB = aToB * directions[i].AsVector3;
         directions[i] = new Float3(localB);
       }
     }
@@ -605,7 +607,7 @@ namespace SamDriver.Decal
       mesh.tangents = tangents;
     }
 
-    static Mesh BuildMesh(IEnumerable<Triangle> triangles)
+    static Mesh BuildMesh(IEnumerable<Triangle> triangles, Float3 localScale)
     {
       List<Vector3> positions = new List<Vector3>();
       List<Vector2> uvs = new List<Vector2>();
@@ -621,7 +623,7 @@ namespace SamDriver.Decal
         foreach (Vertex vertex in triangle)
         {
           positions.Add(vertex.Position.AsVector3);
-          normals.Add(vertex.Normal.AsVector3);
+          normals.Add((vertex.Normal * localScale).AsVector3);
           uvs.Add(new Vector2(
             vertex.Position.x + 0.5f,
             vertex.Position.y + 0.5f
