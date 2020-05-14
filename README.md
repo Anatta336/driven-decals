@@ -11,13 +11,13 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 * Support for multi-object editing and undo.
 
 ## Key Limitations
-* Not suited for generating decals in real-time, so not recommended as a way to dynamically place bullet holes.
+* Decal generation is relatively slow, so not recommended as a way to dynamically place bullet holes during gameplay.
 * Inefficient compared to methods available to deferred renderers such as the high definition render pipeline (HDRP).
 
 ## Contents
 * [Getting Started](#getting-started)
 * [Creating Your Own Decals](#creating-your-own-decals)
-* [Decal Component](#decal)
+* [DecalMesh Component](#decal)
 * [DecalAsset](#decalasset)
 * [Projection Targets](#projection-targets)
 * [zFade](#zfade)
@@ -37,9 +37,9 @@ In theory it should work in the LWRP and Unity versions as far back as 2018. But
 
 ### Installation
 1. Download [drivenDecals.unitypackage](https://github.com/Anatta336/driven-decals/raw/master/drivenDecals.unitypackage)
-2. Open your project in Unity (alternatively create a test project using the URP template.)
+2. Open your project in Unity (or create a test project using the universal render pipeline template.)
 3. Drag the drivenDecals.unitypackage file into the "Project" window in Unity, or use *Import Package* in the *Assets* top menu.
-4. Leave everything ticked and click Import.
+4. Leave everything ticked and click *Import*.
 5. Don't rename or move the `Assets/DrivenDecals/Editor` directory. Unfortunately Unity requires some hardcoded paths.
 
 ### Your First Decal
@@ -57,7 +57,7 @@ You can use Unity's standard controls to move, rotate, and scale the decal objec
 
 ![A decal object positioned so that the grey wireframe box overlaps some wooden planks in Unity's template scene. The decal's texture is shown on a quad floating in the air.](/documentation/images/unprojectedDecal.png)
 
-Click "Project mesh" in the inspector to project the decal forward through its volume, generating a new mesh that matches the shape of whatever meshes it encounters. When making adjustments you'll need to click "Project mesh" again to see their effect. If there's no mesh being generated double check that the decal's grey wireframe is passing *through* the mesh of another GameObject that's marked as static.
+Click "Project mesh" in the inspector to project the decal forward through its volume, generating a new mesh that matches the shape of whatever meshes it encounters. When making adjustments to the mesh's position you'll need to click "Project mesh" again to see their effect. If there's no mesh being generated double check that the object is positioned so the grey wireframe is passing *through* the mesh of another GameObject that's marked as static.
 
 ![A decal object after projection. The decal's texture now appears flattened against the wooden planks.](/documentation/images/projectedDecal.png)
 
@@ -96,7 +96,7 @@ With a compatible material selected a preview of the diffuse texture should appe
 Each *DecalAsset* defines a single rectangle on the texture. If a texture has several decals on it we can create multiple *DecalAssets*, all using the same material.
 
 ### 4. Decal object
-To get the decal into the scene we create a decal object. Right-click in the hierarchy window and select *3D Object* → *Driven Decal*, just like if you were creating a cube or other basic object. Use the inspector to select one of the *DecalAssets* we just created and you should see the decal appear floating in the scene.
+To get the decal into the scene we create a decal object with the *DecalMesh* component. Right-click in the hierarchy window and select *3D Object* → *Driven Decal*, just like if you were creating a cube or other basic object. Use the inspector to select one of the *DecalAssets* we just created and you should see the decal appear floating in the scene.
 
 ![Selecting a Decal Asset to use for a newly created decal object](/documentation/images/selectDecalAsset.png)
 
@@ -104,20 +104,20 @@ Now we position the decal object so that the grey wireframe box is intersecting 
 
 ![Two decal objects projected against the wooden plank. The letters now appears to be written on the surface of the wood.](/documentation/images/projectedLetterA.png)
 
-If you want the same decal to appear multiple times just create more decal objects (or duplicate this one) and have them use the same *DecalAsset*. It's often helpful to use the decal's flip horizontal, flip vertical, and the object's rotation to make it less obvious that a texture is being reused.
+If you want the same decal to appear multiple times just create more decal objects (or duplicate this one) and have them use the same *DecalAsset*. It can be helpful to use the *DecalAsset*'s flip horizontal and flip vertical options, and the object's rotation to make it less obvious that a texture is being reused.
 
 ## Overview
-### Decal
-A *Decal* is a component on a GameObject. Every decal that appears in your scene will be represented by an individual object. Although you can add it as a component to any GameObject usually you'll want it to be on its own object so you can easily adjust the position, rotation and scale. The GameObject will need to also have a *MeshFilter* and *MeshRenderer* to display the decal, which are automatically added. You do not need to set the material or mesh, that is automatically handled by the *Decal* component.
+### DecalMesh
+A *DecalMesh* is a component on a GameObject. Every decal that appears in your scene will be represented by an individual object. Although you can add a *DecalMesh* as a component to any GameObject usually you'll want it to be on its own object so you can easily adjust the position, rotation and scale. The GameObject will need to also have a *MeshFilter* and *MeshRenderer* to display the decal, which are automatically added. You do not need to set the material or mesh, that is automatically handled by the *DecalMesh* component.
 
-The object defines the location of a decal in the scene and the *Decal* component is responsible for generating the mesh. Reference to a *DecalAsset* is used to decide what the decal should look like. You can have many decals all using the same *DecalAsset*.
+The object defines the location of a decal in the scene and the *DecalMesh* component is responsible for generating the mesh. Reference to a *DecalAsset* is used to decide what the decal should look like. You can have many decals all using the same *DecalAsset*.
 
 You create a decal object by right-clicking in the Hierarchy window and selecting *3D Object* → *Driven Decal*, or using the top menu bar's *GameObject* → *3D Object* → *Driven Decal*
 
 #### Projection Targets
-By default a decal has the "All static meshes" option enabled and it'll try to project against any nearby mesh that belongs to a GameObject marked as static. You may want more control over what the decal is projected against, which you can do by disabling that option and manually selecting the meshes to target.
+By default a decal has the "All static meshes" option enabled and it'll try to project against any nearby mesh belinging to a GameObject marked as static. If you want more control over what the decal is projected against you can disable that option and manually select the meshes to target.
 
-With "All static meshes" unticked, the "Target meshes" field will no longer be greyed out. The easiest way to add to that list of *MeshFilters* is to drag a GameObject with a *MeshFilter* (anything that gets rendered as a mesh will have one) from the hierarchy window over to the "Target meshes" text in the inspector. You can also expand the "Target meshes" field, manually change the Size value and add or remove MeshFilters from the list.
+With "All static meshes" unticked, the "Target meshes" field will no longer be greyed out. The easiest way to add to that list of *MeshFilters* is to drag a GameObject with a *MeshFilter* (anything that gets rendered as a mesh will have one) from the hierarchy window over to the "Target meshes" text in the inspector. You can also expand the "Target meshes" field, manually change the *Size* value and add or remove *MeshFilters* from the list.
 
 ![A decal projected against the safety hat in Unity's template scene. The inspector shows that the decal is targeting only the hat's MeshFilter.](/documentation/images/projectedOnHat.png)
 
@@ -125,7 +125,7 @@ Limiting the target meshes can also help improve performance of mesh projection.
 
 Decals can be projected against any mesh in the scene, not just static meshes. But remember once the decal mesh has been generated it's handled by Unity like any other mesh - it doesn't automatically know that it should follow the target. So if you project a decal against a car and then move the car, the decals will be left behind floating in the air. A fun image, but probably not intentional. For a situation like that you should make the decal objects be a child of the car object, that way when the car moves it'll take the decals with it.
 
-Be aware that the decal is projected against the mesh in the state that it's stored. The target object's scale and rotation are accounted for, but if the target mesh is undergoing bone-based animation or other distortion by a vertex shader these effects will **not** be present in the projected decal. Similarly if you're using geometry shaders the decal projection process will not be aware of any generated faces.
+Be aware that the decal is projected against the mesh in the state that the mesh is stored. The target object's scale and rotation are accounted for, but if the target mesh is undergoing bone-based animation or other distortion by a vertex shader these effects will **not** be present in the projected decal. Similarly if you're using geometry shaders the decal projection process will not be aware of any generated faces.
 
 #### zFade
 The "Z Fade Distance" setting allows you to make the decal fade away when near its local z-axis bounds. A higher value fades over a longer distance, with a value of zero disabling the effect and causing a hard edge. The zFade value is given as a proportion of the decal's size in the local z-axis.
@@ -150,7 +150,7 @@ A *DecalAsset* is an asset in your project. It decides how a decal will look by 
 
 To select what region of the source texture will be used in a *DecalAsset* you can use the mouse to drag a rectangle over the preview image, use the small buttons with arrows on them, or directly enter values for uMin, uMax, vMin, and vMax. Common practice is to start by using the mouse to select approximately the correct region and then use the clickable buttons to adjust it.
 
-An thumbnail icon representing the decal is automatically generated when you edit a *DecalAsset*, making it easier to navigate through a collection. The thumbnail uses the "preview background" colour to fill in transparent areas, so you may want to change that if the default makes your decal hard to see.
+A thumbnail icon representing the decal is automatically generated when you edit a *DecalAsset*, making it easier to navigate through your collection. The thumbnail uses the "preview background" colour to fill in transparent areas, so you may want to change that if the default makes your decal hard to see.
 
 ![The DecalAsset inspector showing a selected rectangular region within a texture](/documentation/images/decalAssetPencilA.png)
 
@@ -159,16 +159,19 @@ You create a *DecalAsset* by right-clicking in the Project window and selecting 
 ### Material
 As with other meshes in Unity, the decal's mesh is rendered using a *Material*. The material provides the texture(s) and the process for rendering. Decals need special materials so you can't just use a material made for any model. You can make your own decal materials by using one of the included decal shaders, or you can create your own shader (see [Custom Shaders](#custom-shaders)).
 
-Generally you'll want to create one Material for each texture set. A texture set may be a single diffuse texture or a matching set of diffuse, normal, metallic, occlusion, etc. textures. A common practice is to design a texture set so that it contains multiple related decals, very similar to the idea of a spritesheet.
+Generally you'll want to create one *Material* for each texture set. A texture set may be a single diffuse texture or a matching set of diffuse, normal, metallic, occlusion, etc. textures. A common practice is to design a texture set so that it contains multiple related decals, very similar to the idea of a spritesheet.
 
-You create a decal material as you would any other material in Unity by right-clicking in the Project window and selecting *Create* → *Material*. The newly created material will default to using one of Unity's shaders which isn't suitable for decals, so you should click the Shader dropdown menu at the top of the inspector and select an appropriate decal shader. You can type "decal" to filter the list and more easily find the example shaders.
+![Texture set used for the sample fasteners. Consists of 3 separate textures each representing aspects of 10 objects](/documentation/images/textureSet.png)
+*Texture set used for the sample fastener decals*
+
+You create a decal material as you would any other material in Unity by right-clicking in the Project window and selecting *Create* → *Material*. The newly created material will default to using one of Unity's shaders which isn't suitable for decals, so you should click the Shader dropdown menu at the top of the inspector and select an appropriate decal shader. You can type `decal` to filter the list and more easily find the example shaders.
 
 Note that the `Legacy Shaders/Decal` shader is **not** compatible with this decal system. `DecalOverlayBounds` and `DecalThumbnail` are shaders needed by custom inspectors and are also not suitable for use in decals.
 
 ![Shader selection on a new material, showing a listing of shaders filtered by the string "decal".](/documentation/images/decalShadersList.png)
 
 ## Generating Decals at Runtime
-It's possible to create, adjust, and project decals through scripts at runtime. Keep in mind that the mesh projection process is **slow** so I strongly recommend you only perform script-triggered decal projection during load screens. If you're looking for a way to generate bullet holes at runtime, this is not the decal system for you.
+It's possible to create, adjust, and project decals through scripts at runtime. Although the mesh projection process uses Unity's job system it still does enough work on the primary thread to cause noticeable dropped frames if used during gameplay. If you're looking for a way to generate bullet holes during gameplay, this is probably not the decal system for you.
 
 Doing things like changing a decal's opacity or even switching between DecalAssets is cheap to do. To see the effect during runtime you'll need to call `SetupMaterialPropertyBlock()` on the affected decal.
 
@@ -210,7 +213,9 @@ Although this decal system works in the HDRP, I don't recommend its use. The HDR
 There is also a known issue with the rendering of previews and thumbnails texture not working in the HDRP. As this decal system isn't intended for use in the HDRP, fixing that is a low priority.
 
 ## Future Work
-The process for generating the projected mesh has significant potential for optimisation. Not least, it should be well suited to being split over several threads. Improvements here may make the system more suitable for generating decals at runtime.
+The decal mesh generation process is only partially threaded. Generation of the actual mesh still takes place on the main thread and can cause dropped frames if done during runtime.
+
+A viewspace decal system would be a useful addition for when realtime creation is important.
 
 ## Authors
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_)
