@@ -172,7 +172,7 @@ namespace SamDriver.Decal
 
       float min = minAngleFadeDegrees.floatValue;
       float max = maxAngleFadeDegrees.floatValue;
-      EditorGUILayout.MinMaxSlider("Angle Fade", ref min, ref max, 0f, 180f);
+      EditorGUILayout.MinMaxSlider("Angle Fade", ref min, ref max, 0f, 90f);
       minAngleFadeDegrees.floatValue = min;
       maxAngleFadeDegrees.floatValue = max;
     }

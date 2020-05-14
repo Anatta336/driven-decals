@@ -20,6 +20,8 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 * [Decal Component](#decal)
 * [DecalAsset](#decalasset)
 * [Projection Targets](#projection-targets)
+* [zFade](#zfade)
+* [Angle Fade](#angle-fade)
 * [Material for Decals](#material)
 * [Generating Decals at Runtime](#generating-decals-at-runtime)
 * [Static Batching](#static-batching)
@@ -128,11 +130,20 @@ Be aware that the decal is projected against the mesh in the state that it's sto
 #### zFade
 The "Z Fade Distance" setting allows you to make the decal fade away when near its local z-axis bounds. A higher value fades over a longer distance, with a value of zero disabling the effect and causing a hard edge. The zFade value is given as a proportion of the decal's size in the local z-axis.
 
-![A decal with zFade disabled](/documentation/images/zFadeZero.png)
+![Decal with zFade disabled](/documentation/images/zFadeZero.png)
 *zFade disabled*
 
-![A decal with zFade set to 0.2, giving a soft fading effect near the decal region's z border](/documentation/images/zFadePointTwo.png)
+![Decal with zFade set to 0.2, giving a soft fading effect near the decal region's z border](/documentation/images/zFadePointTwo.png)
 *zFade set to 0.2*
+
+#### Angle Fade
+"Angle Fade" allows you to make a decal fade depending on relative angle. This is particularly useful if you want to hide parts of the decal which would appear heavily distorted due to the angle of the surface it is projected against. Angle fade is set with a minimum and maximum angle value, the difference between the values determines how soft the fade transition is.
+
+![Decal with angle fade values set near the maximum so only the most extreme angles cause fading](/documentation/images/angleFadeWide.png)
+*Angle Fade set to large values*
+
+![Decal with angle fade values set lower and close together, causing more of the decal to be hidden and to have a sharp fade transition](/documentation/images/angleFadeNarrow.png)
+*Angle Fade set to smaller and closer values*
 
 ### DecalAsset
 A *DecalAsset* is an asset in your project. It decides how a decal will look by defining a rectangular region on the source texture, and by referring to a *Material* that does the rendering. You can have many *DecalAssets* all using the same *Material*.
@@ -187,6 +198,7 @@ These properties are recommended as certain features will not work without them,
 * `_Opacity` Float in range 0 to 1 to uniformly fade out the decal, with 0 being hidden.
 * `_FlipU` and `_FlipV` Booleans to flip the texture region. The *Decal UV* subgraph can do this for you.
 * `_ZFadeStart` Float in range 0 to 1 to fade out the decal as it gets near the Z axis limits of its region. The *Fade near z bounds* subgraph will achieve this effect.
+* `_MinAngleFadeRadians` and `_MaxAngleFadeRadians` Floats to define at what local angle to fade the decal. The *Fade by angle* subgraph can achieve this effect.
 
 The *DecalAsset* inspector will inform you if you use a material that's lacking any of these properties.
 
