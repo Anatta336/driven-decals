@@ -51,13 +51,15 @@ namespace SamDriver.Decal
 
     static string[] essentialMaterialProperties = new string[] {
       "_DiffuseAlpha",
-      "_Bounds"
+      "_Bounds",
     };
     static string[] supportedMaterialProperties = new string[] {
       "_Opacity",
       "_FlipU",
       "_FlipV",
-      "_ZFadeStart"
+      "_ZFadeStart",
+      "_MinAngleFadeRadians",
+      "_MaxAngleFadeRadians",
     };
 
     static Color previewBackColour = Color.white;

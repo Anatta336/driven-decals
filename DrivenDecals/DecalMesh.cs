@@ -14,6 +14,8 @@ namespace SamDriver.Decal {
     public DecalAsset DecalAsset;
     public float Opacity = 1f;
     public float ZFadeDistance = 0.1f;
+    public float MinAngleFadeDegrees = 83f;
+    public float MaxAngleFadeDegrees = 85f;
     public bool IsFlipU = false;
     public bool IsFlipV = false;
     public bool ShouldUseSceneStaticMeshes = true;
@@ -51,6 +53,8 @@ namespace SamDriver.Decal {
     static int boundsID = Shader.PropertyToID("_Bounds");
     static int opacityID = Shader.PropertyToID("_Opacity");
     static int zFadeStartID = Shader.PropertyToID("_ZFadeStart");
+    static int minAngleFadeRadiansID = Shader.PropertyToID("_MinAngleFadeRadians");
+    static int maxAngleFadeRadiansID = Shader.PropertyToID("_MaxAngleFadeRadians");
     static int flipUID = Shader.PropertyToID("_FlipU");
     static int flipVID = Shader.PropertyToID("_FlipV");
 
@@ -156,6 +160,8 @@ namespace SamDriver.Decal {
       materialPropertyBlock.SetVector(boundsID, DecalAsset.BoundsAsVector4);
       materialPropertyBlock.SetFloat(opacityID, Opacity);
       materialPropertyBlock.SetFloat(zFadeStartID, isMeshUnprojected ? 0f : ZFadeDistance);
+      materialPropertyBlock.SetFloat(minAngleFadeRadiansID, MinAngleFadeDegrees * Mathf.Deg2Rad);
+      materialPropertyBlock.SetFloat(maxAngleFadeRadiansID, MaxAngleFadeDegrees * Mathf.Deg2Rad);
       materialPropertyBlock.SetInt(flipUID, IsFlipU ? 1 : 0);
       materialPropertyBlock.SetInt(flipVID, IsFlipV ? 1 : 0);
 

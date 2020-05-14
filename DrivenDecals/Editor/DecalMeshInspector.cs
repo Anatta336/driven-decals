@@ -12,6 +12,8 @@ namespace SamDriver.Decal
     SerializedProperty zFadeDistance;
     SerializedProperty isFlipU;
     SerializedProperty isFlipV;
+    SerializedProperty minAngleFadeDegrees;
+    SerializedProperty maxAngleFadeDegrees;
     SerializedProperty shouldUseAllSceneStaticMeshes;
     SerializedProperty meshesToProjectAgainst;
 
@@ -22,6 +24,8 @@ namespace SamDriver.Decal
       zFadeDistance = serializedObject.FindProperty(nameof(DecalMesh.ZFadeDistance));
       isFlipU = serializedObject.FindProperty(nameof(DecalMesh.IsFlipU));
       isFlipV = serializedObject.FindProperty(nameof(DecalMesh.IsFlipV));
+      minAngleFadeDegrees = serializedObject.FindProperty(nameof(DecalMesh.MinAngleFadeDegrees));
+      maxAngleFadeDegrees = serializedObject.FindProperty(nameof(DecalMesh.MaxAngleFadeDegrees));
       shouldUseAllSceneStaticMeshes = serializedObject.FindProperty(nameof(DecalMesh.ShouldUseSceneStaticMeshes));
       meshesToProjectAgainst = serializedObject.FindProperty(nameof(DecalMesh.MeshesToProjectAgainst));
     }
@@ -165,6 +169,12 @@ namespace SamDriver.Decal
     {
       EditorGUILayout.Slider(opacity, 0f, 1f, "Opacity");
       EditorGUILayout.Slider(zFadeDistance, 0f, 1f, "Z Fade Distance");
+
+      float min = minAngleFadeDegrees.floatValue;
+      float max = maxAngleFadeDegrees.floatValue;
+      EditorGUILayout.MinMaxSlider("Angle Fade", ref min, ref max, 0f, 180f);
+      minAngleFadeDegrees.floatValue = min;
+      maxAngleFadeDegrees.floatValue = max;
     }
 
     void FlipOptionsGUI()
