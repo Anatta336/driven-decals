@@ -20,7 +20,7 @@ public class DecalSpawner : MonoBehaviour
   public DecalAsset DecalToSpawn;
   public List<MeshFilter> MeshesToProjectAgainst = new List<MeshFilter>();
 
-  List<Decal> spawnedDecals = new List<Decal>();
+  List<DecalMesh> spawnedDecals = new List<DecalMesh>();
 
   void Update()
   {
@@ -39,7 +39,7 @@ public class DecalSpawner : MonoBehaviour
     }
   }
 
-  Decal CreateDecal(float localX, float localY)
+  DecalMesh CreateDecal(float localX, float localY)
   {
     // create game object as child of the spawner
     GameObject decalObject = new GameObject($"Spawned Decal ({localX.ToString("F3")},{localY.ToString("F3")})");
@@ -57,7 +57,7 @@ public class DecalSpawner : MonoBehaviour
     meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
     // create the decal component itself
-    var decal = decalObject.AddComponent<Decal>();
+    var decal = decalObject.AddComponent<DecalMesh>();
 
     // provide it with a DecalAsset
     decal.DecalAsset = this.DecalToSpawn;

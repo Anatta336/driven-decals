@@ -11,7 +11,7 @@ namespace SamDriver.Decal
       GameObject decalObject = new GameObject("Decal");
       decalObject.AddComponent<MeshFilter>();
       var meshRenderer = decalObject.AddComponent<MeshRenderer>();
-      var decal = decalObject.AddComponent<Decal>();
+      var decal = decalObject.AddComponent<DecalMesh>();
 
       // do NOT set to be used in static batching - Unity breaks something with UVs
       GameObjectUtility.SetStaticEditorFlags(decalObject,

@@ -7,9 +7,9 @@ namespace SamDriver.Decal {
   [RequireComponent(typeof(MeshRenderer))]
   [RequireComponent(typeof(MeshFilter))]
   /// <summary>
-  /// Represents a single Decal instance in the scene.
+  /// Represents a single mesh-based decal in the scene.
   /// </summary>
-  public class Decal : MonoBehaviour
+  public class DecalMesh : MonoBehaviour
   {
     public DecalAsset DecalAsset;
     public float Opacity = 1f;
@@ -173,11 +173,11 @@ namespace SamDriver.Decal {
     {
       if (DecalAsset == null)
       {
-        throw new DecalException($"{nameof(SamDriver.Decal.Decal)} requires a {nameof(SamDriver.Decal.DecalAsset)} in order to match its scale.");
+        throw new DecalException($"{nameof(SamDriver.Decal.DecalMesh)} requires a {nameof(SamDriver.Decal.DecalAsset)} in order to match its scale.");
       }
       else if (DecalAsset.HasAnyZeroSizedDimensions)
       {
-        throw new DecalException($"{nameof(SamDriver.Decal.Decal)} cannot scale to match a {nameof(SamDriver.Decal.DecalAsset)} with zero width or height.");
+        throw new DecalException($"{nameof(SamDriver.Decal.DecalMesh)} cannot scale to match a {nameof(SamDriver.Decal.DecalAsset)} with zero width or height.");
       }
 
       #if UNITY_EDITOR
@@ -273,7 +273,7 @@ namespace SamDriver.Decal {
     {
       if (!HasMeshToProjectAgainst)
       {
-        throw new DecalException($"Projecting a {nameof(Decal)} requires at least one target mesh to project against.");
+        throw new DecalException($"Projecting a {nameof(DecalMesh)} requires at least one target mesh to project against.");
       }
 
       #if UNITY_EDITOR
@@ -309,7 +309,7 @@ namespace SamDriver.Decal {
       }
       if (!HasMeshToProjectAgainst)
       {
-        throw new DecalException($"Projecting a {nameof(Decal)} requires at least one target mesh to project against.");
+        throw new DecalException($"Projecting a {nameof(DecalMesh)} requires at least one target mesh to project against.");
       }
 
       EnforcePositiveScale();
@@ -362,7 +362,7 @@ namespace SamDriver.Decal {
 
           // don't project against other decals
           #if UNITY_2019_1_OR_NEWER
-          if (meshFilter.gameObject.TryGetComponent<Decal>(out _)) continue;
+          if (meshFilter.gameObject.TryGetComponent<DecalMesh>(out _)) continue;
           #else
           if (meshFilter.gameObject.GetComponent<Decal>() != null) continue;
           #endif

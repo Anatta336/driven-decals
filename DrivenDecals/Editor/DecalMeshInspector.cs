@@ -3,9 +3,9 @@ using UnityEditor;
 
 namespace SamDriver.Decal
 {
-  [CustomEditor(typeof(Decal))]
+  [CustomEditor(typeof(DecalMesh))]
   [CanEditMultipleObjects]
-  public class DecalInspector : Editor
+  public class DecalMeshInspector : Editor
   {
     SerializedProperty decalAsset;
     SerializedProperty opacity;
@@ -17,25 +17,25 @@ namespace SamDriver.Decal
 
     void OnEnable()
     {
-      decalAsset = serializedObject.FindProperty(nameof(Decal.DecalAsset));
-      opacity = serializedObject.FindProperty(nameof(Decal.Opacity));
-      zFadeDistance = serializedObject.FindProperty(nameof(Decal.ZFadeDistance));
-      isFlipU = serializedObject.FindProperty(nameof(Decal.IsFlipU));
-      isFlipV = serializedObject.FindProperty(nameof(Decal.IsFlipV));
-      shouldUseAllSceneStaticMeshes = serializedObject.FindProperty(nameof(Decal.ShouldUseSceneStaticMeshes));
-      meshesToProjectAgainst = serializedObject.FindProperty(nameof(Decal.MeshesToProjectAgainst));
+      decalAsset = serializedObject.FindProperty(nameof(DecalMesh.DecalAsset));
+      opacity = serializedObject.FindProperty(nameof(DecalMesh.Opacity));
+      zFadeDistance = serializedObject.FindProperty(nameof(DecalMesh.ZFadeDistance));
+      isFlipU = serializedObject.FindProperty(nameof(DecalMesh.IsFlipU));
+      isFlipV = serializedObject.FindProperty(nameof(DecalMesh.IsFlipV));
+      shouldUseAllSceneStaticMeshes = serializedObject.FindProperty(nameof(DecalMesh.ShouldUseSceneStaticMeshes));
+      meshesToProjectAgainst = serializedObject.FindProperty(nameof(DecalMesh.MeshesToProjectAgainst));
     }
 
     public override void OnInspectorGUI()
     {
       bool isEditingMultipleObjects = (targets != null && targets.Length > 1);
 
-      var items = new Decal[targets.Length];
+      var items = new DecalMesh[targets.Length];
       for (int i = 0; i < targets.Length; ++i)
       {
-        items[i] = (Decal)targets[i];
+        items[i] = (DecalMesh)targets[i];
       }
-      var primaryItem = (Decal)target;
+      var primaryItem = (DecalMesh)target;
       serializedObject.Update();
 
       ProjectMeshButtonGUI(primaryItem, items, isEditingMultipleObjects);
@@ -49,7 +49,7 @@ namespace SamDriver.Decal
       serializedObject.ApplyModifiedProperties();
     }
 
-    void ProjectMeshButtonGUI(Decal primaryItem, Decal[] items, bool isEditingMultipleObjects)
+    void ProjectMeshButtonGUI(DecalMesh primaryItem, DecalMesh[] items, bool isEditingMultipleObjects)
     {
       bool canAnyTargetProject = false;
       foreach (var item in items)
@@ -102,7 +102,7 @@ namespace SamDriver.Decal
       }
     }
 
-    void ResetMeshButtonGUI(Decal primaryItem, Decal[] items, bool isEditingMultipleObjects)
+    void ResetMeshButtonGUI(DecalMesh primaryItem, DecalMesh[] items, bool isEditingMultipleObjects)
     {
       if (GUILayout.Button("Reset mesh"))
       {
@@ -113,7 +113,7 @@ namespace SamDriver.Decal
       }
     }
 
-    void ScaleToMatchButtonGUI(Decal primaryItem, Decal[] items, bool isEditingMultipleObjects)
+    void ScaleToMatchButtonGUI(DecalMesh primaryItem, DecalMesh[] items, bool isEditingMultipleObjects)
     {
       bool canAnyPerformScale = false;
       foreach (var item in items)
@@ -147,7 +147,7 @@ namespace SamDriver.Decal
       }
     }
 
-    void DecalPickerGUI(Decal primaryItem, Decal[] items, bool isEditingMultipleObjects)
+    void DecalPickerGUI(DecalMesh primaryItem, DecalMesh[] items, bool isEditingMultipleObjects)
     {
       EditorGUILayout.PropertyField(decalAsset,
         new GUIContent("Decal Asset",
@@ -156,7 +156,7 @@ namespace SamDriver.Decal
 
       if (!isEditingMultipleObjects && !primaryItem.HasDecalAsset)
       {
-        EditorGUILayout.HelpBox($"{nameof(Decal)} requires a {nameof(DecalAsset)}",
+        EditorGUILayout.HelpBox($"{nameof(DecalMesh)} requires a {nameof(DecalAsset)}",
           MessageType.Error);
       }
     }
