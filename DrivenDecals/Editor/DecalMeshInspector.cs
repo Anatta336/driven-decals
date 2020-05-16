@@ -59,7 +59,6 @@ namespace SamDriver.Decal
           decal.HasTransformChangedSinceProjection &&
           !decal.IsAwaitingProjectionResult)
         {
-          Debug.Log("auto generating");
           decal.GenerateProjectedMeshDelayed();
         }
       }
