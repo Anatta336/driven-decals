@@ -60,7 +60,7 @@ You can use Unity's standard controls to move, rotate, and scale the decal objec
 
 ![A decal object positioned so that the grey wireframe box overlaps some wooden planks in Unity's template scene. The decal's texture is shown on a quad floating in the air.](/documentation/images/unprojectedDecal.png)
 
-Click "Project mesh" in the inspector to project the decal forward through its volume, generating a new mesh that matches the shape of whatever meshes it encounters. When making adjustments to the mesh's position you'll need to click "Project mesh" again to see their effect. If there's no mesh being generated double check that the object is positioned so the grey wireframe is passing *through* the mesh of another GameObject that's marked as static.
+Click "Project mesh" in the inspector to project the decal forward through its volume, generating a new mesh that matches the shape of whatever meshes it encounters. When making adjustments to the mesh's position you'll need to click "Project mesh" again to see their effect, or turn on the "Auto-Repeat" option next to the button. If there's no mesh being generated double check that the object is positioned so the grey wireframe is passing *through* the mesh of another GameObject that's marked as static.
 
 ![A decal object after projection. The decal's texture now appears flattened against the wooden planks.](/documentation/images/projectedDecal.png)
 

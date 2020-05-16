@@ -1,5 +1,9 @@
 # Changelog
 
+## 2020-05-16
+### Added
+- Option to "Auto-Repeat" projection of the `DecalMesh` which triggers the projection process whenever the selected decal is moved, rotated, or resized in the editor.
+
 ## 2020-05-14
 ### Added
 - Option to fade out a decal depending on the surface's angle to the decal's forward direction. Useful for hiding parts of the decal that are highly distorted by projection.

@@ -7,16 +7,10 @@ namespace SamDriver.Decal
   [CanEditMultipleObjects]
   public class DecalMeshInspector : Editor
   {
-    SerializedProperty decalAsset;
-    SerializedProperty opacity;
-    SerializedProperty zFadeDistance;
-    SerializedProperty isFlipU;
-    SerializedProperty isFlipV;
-    SerializedProperty minAngleFadeDegrees;
-    SerializedProperty maxAngleFadeDegrees;
-    SerializedProperty drawOrder;
-    SerializedProperty shouldUseAllSceneStaticMeshes;
-    SerializedProperty meshesToProjectAgainst;
+    SerializedProperty decalAsset, opacity, zFadeDistance, isFlipU, isFlipV,
+      minAngleFadeDegrees, maxAngleFadeDegrees, drawOrder,
+      shouldUseAllSceneStaticMeshes, meshesToProjectAgainst,
+      shouldReprojectOnMove;
 
     void OnEnable()
     {
@@ -30,6 +24,7 @@ namespace SamDriver.Decal
       drawOrder = serializedObject.FindProperty(nameof(DecalMesh.DrawOrder));
       shouldUseAllSceneStaticMeshes = serializedObject.FindProperty(nameof(DecalMesh.ShouldUseSceneStaticMeshes));
       meshesToProjectAgainst = serializedObject.FindProperty(nameof(DecalMesh.MeshesToProjectAgainst));
+      shouldReprojectOnMove = serializedObject.FindProperty(nameof(DecalMesh.ShouldReprojectOnMove));
     }
 
     public override void OnInspectorGUI()
@@ -54,6 +49,20 @@ namespace SamDriver.Decal
       TargetMeshesGUI();
 
       serializedObject.ApplyModifiedProperties();
+
+      Repaint();
+
+      // bit dubious doing this call from within OnInspectorGUI, but with Repaint() should get called often enough
+      foreach (var decal in items)
+      {
+        if (decal.ShouldReprojectOnMove &&
+          decal.HasTransformChangedSinceProjection &&
+          !decal.IsAwaitingProjectionResult)
+        {
+          Debug.Log("auto generating");
+          decal.GenerateProjectedMeshDelayed();
+        }
+      }
     }
 
     void ProjectMeshButtonGUI(DecalMesh primaryItem, DecalMesh[] items, bool isEditingMultipleObjects)
@@ -70,15 +79,23 @@ namespace SamDriver.Decal
 
       using (new EditorGUI.DisabledScope(!canAnyTargetProject))
       {
-        if (GUILayout.Button("Project mesh"))
+        using (EditorGUIUtility.wideMode ? new EditorGUILayout.HorizontalScope() : null)
         {
-          foreach (var item in items)
+          if (GUILayout.Button("Project mesh"))
           {
-            if (item.HasMeshToProjectAgainst)
+            foreach (var item in items)
             {
-              item.GenerateProjectedMeshImmediate();
+              if (item.HasMeshToProjectAgainst)
+              {
+                item.GenerateProjectedMeshImmediate();
+              }
             }
           }
+          var previousWidth = EditorGUIUtility.labelWidth;
+          EditorGUIUtility.labelWidth = 80f;
+          EditorGUILayout.PropertyField(shouldReprojectOnMove,
+            new GUIContent("Auto-Repeat", "Automatically attempt to project mesh when the decal is moved in the editor."));
+          EditorGUIUtility.labelWidth = previousWidth;
         }
       }
       if (!canAnyTargetProject)

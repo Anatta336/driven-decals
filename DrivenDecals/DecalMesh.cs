@@ -21,12 +21,23 @@ namespace SamDriver.Decal {
     public int DrawOrder = 0;
     public bool ShouldUseSceneStaticMeshes = true;
     public List<MeshFilter> MeshesToProjectAgainst = new List<MeshFilter>();
+    public bool ShouldReprojectOnMove = false;
 
     public bool IsAwaitingProjectionResult
     {
       get => projectionInProgress != null;
     }
     MeshProjection projectionInProgress;
+
+    public bool HasTransformChangedSinceProjection
+    {
+      get => positionOfProjection != transform.position ||
+        scaleOfProjection != transform.localScale ||
+        rotationOfProjection != transform.rotation;
+    }
+    [SerializeField] Vector3 positionOfProjection;
+    [SerializeField] Vector3 scaleOfProjection;
+    [SerializeField] Quaternion rotationOfProjection;
 
     [SerializeField] bool isMeshUnprojected = false;
 
@@ -293,8 +304,11 @@ namespace SamDriver.Decal {
 
       EnforcePositiveScale();
 
-      meshFilter.mesh = MeshProjection.GenerateProjectedDecalMesh(WorldMeshFilters(), this.transform);
+      meshFilter.mesh = MeshProjection.GenerateProjectedDecalMesh(WorldMeshFilters(), transform);
       isMeshUnprojected = false;
+      positionOfProjection = transform.position;
+      scaleOfProjection = transform.localScale;
+      rotationOfProjection = transform.rotation;
 
       #if UNITY_EDITOR
       // if we're part of a prefab need to report change through PrefabUtility for undo etc to work correctly
@@ -324,7 +338,10 @@ namespace SamDriver.Decal {
 
       EnforcePositiveScale();
 
-      projectionInProgress = new MeshProjection(WorldMeshFilters(), this.transform, expectToTakeMoreThanFourFrames);
+      projectionInProgress = new MeshProjection(WorldMeshFilters(), transform, expectToTakeMoreThanFourFrames);
+      positionOfProjection = transform.position;
+      scaleOfProjection = transform.localScale;
+      rotationOfProjection = transform.rotation;
     }
 
     void ReceiveProjectionResult()
