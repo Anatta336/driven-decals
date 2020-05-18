@@ -1,7 +1,9 @@
 # Driven Decals
 A mesh-based PBR decal system for Unity. Intended primarily for use with the Universal Render Pipeline's forward renderer.
 
-![Several small details added as decals on the safety hat in Unity's template scene.](/documentation/images/decalsOnHat.png)
+![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/documentation/images/demonstration.png)
+
+[60 second introduction video.](https://www.youtube.com/watch?v=5AyNvbTngV0)
 
 ## Key Features
 * Creates meshes that behave like any other mesh in your scene. Making them easier to work with and use with other features.
