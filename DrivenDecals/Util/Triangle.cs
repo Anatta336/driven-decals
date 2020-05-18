@@ -13,8 +13,8 @@ namespace SamDriver.Decal
 {
   internal struct Triangle : IEnumerable<Vertex>
   {
-    [ReadOnly]
-    public readonly Vertex A, B, C;
+    [ReadOnly] public readonly bool IsPresent; // will default to false when struct is uninitialised
+    [ReadOnly] public readonly Vertex A, B, C;
 
     /// <summary>
     /// The normal of the plane defined by this triangle. Note this may not be equal to the
@@ -45,6 +45,7 @@ namespace SamDriver.Decal
       this.B = b_;
       this.C = c_;
       _geometryNormal = null;
+      IsPresent = true;
     }
     #endregion
 

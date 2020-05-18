@@ -2,11 +2,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections;
-using System.IO;
-using System.Threading.Tasks;
 using System.Linq;
 
 namespace SamDriver.Decal
@@ -50,74 +46,20 @@ namespace SamDriver.Decal
       }
     }
 
-    struct UpToFiveTriangles : IEnumerable<Triangle>
-    {
-      //TODO: this is pretty horrifying.
-      // the trouble is we can't use a NativeArray<NativeArray> in the jobs system,
-      // nor can we use a plain old array because it's a managed type.
-      // We also seemingly can't just decide to allow each job write to 5 indices in a
-      // single shared NativeArray. Lifting that limit is probably the solution.
-      Triangle t0;
-      Triangle t1;
-      Triangle t2;
-      Triangle t3;
-      Triangle t4;
-      int count;
-
-      public void AddTriangle(Triangle triangle)
-      {
-        switch (count)
-        {
-          case 0:
-            t0 = triangle;
-            break;
-          case 1:
-            t1 = triangle;
-            break;
-          case 2:
-            t2 = triangle;
-            break;
-          case 3:
-            t3 = triangle;
-            break;
-          case 4:
-            t4 = triangle;
-            break;
-          default:
-            Debug.LogWarning($"Attempt to add {count + 1} or more triangles to {nameof(UpToFiveTriangles)}");
-            break;
-        }
-        ++count;
-      }
-
-      public IEnumerator<Triangle> GetEnumerator()
-      {
-        if (count == 0) yield break;
-        yield return t0;
-        if (count == 1) yield break;
-        yield return t1;
-        if (count == 2) yield break;
-        yield return t2;
-        if (count == 3) yield break;
-        yield return t3;
-        if (count == 4) yield break;
-        yield return t4;
-      }
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-        return GetEnumerator();
-      }
-    }
-
     struct TrimTriangleParallelJob : IJobParallelFor
     {
       readonly RawMesh inputMesh;
-      NativeArray<UpToFiveTriangles> output;
+      readonly int maxTriangleCount;
 
-      public TrimTriangleParallelJob(RawMesh inputMesh_, NativeArray<UpToFiveTriangles> output_)
+      // disable safety so that we can write outside of the single index given to each job
+      [Unity.Collections.LowLevel.Unsafe.NativeDisableContainerSafetyRestriction]
+      NativeArray<Triangle> output;
+
+      public TrimTriangleParallelJob(RawMesh inputMesh_, NativeArray<Triangle> output_, int maxTriangleCount_)
       {
         this.inputMesh = inputMesh_;
         this.output = output_;
+        this.maxTriangleCount = maxTriangleCount_;
       }
 
       public void Execute(int originalTriangleIndex)
@@ -127,16 +69,20 @@ namespace SamDriver.Decal
         // skip backfaces
         if (original.GeometryNormal.z >= 0f) return;
 
+        int i = 0;
         foreach (var created in TrimTriangle(original))
         {
-          var severalTriangles = output[originalTriangleIndex];
-          severalTriangles.AddTriangle(created);
-          output[originalTriangleIndex] = severalTriangles;
+          if (i > maxTriangleCount)
+          {
+            Debug.LogWarning($"Trimming a triangle created more than the expected maximum of {maxTriangleCount}, discarding excess.");
+            break;
+          }
+          output[originalTriangleIndex * maxTriangleCount + i] = created;
+          ++i;
         }
       }
     }
     #endregion
-
 
     public bool IsReadyToComplete
     {
@@ -148,7 +94,7 @@ namespace SamDriver.Decal
     bool expectToTakeMoreThanFourFrames;
 
     List<RawMesh> rawMeshes;
-    List<NativeArray<UpToFiveTriangles>> allResultingTriangles;
+    List<NativeArray<Triangle>> allResultingTriangles;
     List<JobHandle> trimJobHandles;
 
     public MeshProjection(
@@ -165,7 +111,7 @@ namespace SamDriver.Decal
     void Begin()
     {
       rawMeshes = new List<RawMesh>();
-      allResultingTriangles = new List<NativeArray<UpToFiveTriangles>>();
+      allResultingTriangles = new List<NativeArray<Triangle>>();
       trimJobHandles = new List<JobHandle>();
 
       // begin jobs
@@ -183,20 +129,20 @@ namespace SamDriver.Decal
 
     public UnityEngine.Mesh Complete()
     {
-      // require jobs to complete, pausing main thread until they do
+      // require jobs to complete, potentially pausing main thread until they do
       var resultantTriangles = ReceiveTrimResults(allResultingTriangles, trimJobHandles).ToList();
 
       // clean up
       foreach (var resultingTriangles in allResultingTriangles) resultingTriangles.Dispose();
       rawMeshes.ForEach(rawMesh => rawMesh.Dispose());
 
-      // use generated triangles to make a Unity mesh
+      // use generated triangles to make a Unity mesh (this is still a fairly heavy process in terms of performance)
       return BuildMesh(resultantTriangles, new Float3(decalTransform.localScale));
     }
 
     static void ScheduleTrimJobs(
       ref List<RawMesh> rawMeshes,
-      ref List<NativeArray<UpToFiveTriangles>> allResultingTriangles,
+      ref List<NativeArray<Triangle>> allResultingTriangles,
       ref List<JobHandle> trimJobHandles,
       Transform decalTransform,
       IEnumerable<MeshFilter> meshFilters,
@@ -227,11 +173,13 @@ namespace SamDriver.Decal
         // rawMesh is defined in decal's local space
         var rawMesh = new RawMesh(indices, positions, normals);
 
-        var resultingTriangles = new NativeArray<UpToFiveTriangles>(rawMesh.TriangleCount, allocator);
-        var trimJob = new TrimTriangleParallelJob(rawMesh, resultingTriangles);
+        // sparse array of trimmed triangles which will be filled by the parallel jobs
+        var resultingTriangles = new NativeArray<Triangle>(rawMesh.TriangleCount * maxTrianglesFromTrimmedTriangle, allocator);
+        var trimJob = new TrimTriangleParallelJob(rawMesh, resultingTriangles, maxTrianglesFromTrimmedTriangle);
 
         int batchCount = 1; // may want to tweak batchCount for performance
         var trimJobHandle = trimJob.Schedule(rawMesh.TriangleCount, batchCount);
+        // one [collective noun] of parallel jobs is created for each MeshFilter
 
         rawMeshes.Add(rawMesh);
         allResultingTriangles.Add(resultingTriangles);
@@ -247,19 +195,20 @@ namespace SamDriver.Decal
     /// Enforces the completion of all jobs handled by trimJobHandles.
     /// </summary>
     static IEnumerable<Triangle> ReceiveTrimResults(
-      List<NativeArray<UpToFiveTriangles>> allResultingTriangles,
+      List<NativeArray<Triangle>> allResultingTriangles,
       List<JobHandle> trimJobHandles
     )
     {
-      for (int i = 0; i < allResultingTriangles.Count; ++i)
+      for (int jobIndex = 0; jobIndex < trimJobHandles.Count; ++jobIndex)
       {
-        trimJobHandles[i].Complete();
-        // we now know that the job is completed, and have regained ownership of the NativeArray<Triangle>
+        trimJobHandles[jobIndex].Complete();
+        // we now know that the set of parallel jobs is completed, and have regained ownership of the NativeArray<Triangle>
+        // Reminder: each job handle represents one mesh being handled by a set of parallel jobs
 
-        var resultingTriangles = allResultingTriangles[i];
-        foreach (var severalTriangles in resultingTriangles)
+        var trianglesFromParallelJobs = allResultingTriangles[jobIndex];
+        foreach (var triangle in trianglesFromParallelJobs)
         {
-          foreach (var triangle in severalTriangles)
+          if (triangle.IsPresent)
           {
             yield return triangle;
           }
@@ -275,7 +224,7 @@ namespace SamDriver.Decal
       Transform decalTransform)
     {
       var rawMeshes = new List<RawMesh>();
-      var allResultingTriangles = new List<NativeArray<UpToFiveTriangles>>();
+      var allResultingTriangles = new List<NativeArray<Triangle>>();
       var trimJobHandles = new List<JobHandle>();
 
       // begin jobs

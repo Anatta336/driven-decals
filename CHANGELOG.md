@@ -1,5 +1,9 @@
 # Changelog
 
+## 2020-05-18
+### Changed
+- Disabled a safety check so the ugly `UpToFiveTriangles` struct is no longer needed. Shouldn't have any externally visible effect.
+
 ## 2020-05-16
 ### Added
 - Option to "Auto-Repeat" projection of the `DecalMesh` which triggers the projection process whenever the selected decal is moved, rotated, or resized in the editor.
