@@ -1,9 +1,9 @@
 # Driven Decals
 A mesh-based PBR decal system for Unity. Intended primarily for use with the Universal Render Pipeline's forward renderer.
 
-![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/documentation/images/demonstration.png)
-
 [60 second introduction video.](https://www.youtube.com/watch?v=5AyNvbTngV0)
+
+![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/documentation/images/demonstration.png)
 
 ## Key Features
 * Creates meshes that behave like any other mesh in your scene. Making them easier to work with and use with other features.
@@ -187,7 +187,11 @@ Doing things like changing a decal's opacity or even switching between DecalAsse
 
 To prevent name conflicts all the code used by this decal system is in the namespace `SamDriver.Decal`. So if your code needs to interact with it you may want to add a `using SamDriver.Decal;` at the top of your script's file.
 
-An [example script](../master/DrivenDecals/Sample%20Scripts/DecalSpawner.cs) with plenty of comments that generates decals is included in the Sample Scripts directory.
+There's an [example script](../master/DrivenDecals/Sample%20Scripts/DecalSpawner.cs) with plenty of comments that generates decals is included in the Sample Scripts directory.
+
+To project against a mesh during play mode that mesh needs to fulfil some criteria:
+* Mesh's `isReadable` should true. For imported meshes that means ticking "Read/Write enabled" in the import options.
+* Not using Static Batching on that mesh. During play the original mesh is replaced by a combination of other meshes, which is (usually?) not readable.
 
 ![Example decal spawner shown in the editor before spawning decals.](/documentation/images/spawnerBefore.png)
 ![Example decal spawner after creating a ring of decals projected against a sphere.](/documentation/images/spawnerAfter.png)
@@ -228,7 +232,7 @@ The decal mesh generation process is only partially threaded. Generation of the 
 A viewspace decal system would be a useful addition for when realtime creation is important.
 
 ## Authors
-Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_)
+Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](paypal.me/SamDriver336) (any support is very gratefully received)
 
 ## Licence
 The source code of this project and associated documentation is licensed under the [MIT licence](../master/LICENSE.txt).

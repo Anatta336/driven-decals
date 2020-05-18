@@ -37,6 +37,17 @@ public class DecalSpawner : MonoBehaviour
     {
       spawnedDecals.Add(CreateDecal(localPosition.x, localPosition.y));
     }
+
+    foreach (var decal in spawnedDecals)
+    {
+      if (decal.HasMeshToProjectAgainst)
+      {
+        // begin to perform the projection
+        // if you want the decal mesh to be generated use GenerateProjectedMeshImmediate,
+        // but beware it can easily lock up the main thread and cause skipped frames.
+        decal.GenerateProjectedMeshDelayed();
+      }
+    }
   }
 
   DecalMesh CreateDecal(float localX, float localY)
@@ -78,14 +89,6 @@ public class DecalSpawner : MonoBehaviour
     // if you skip this, it'll default to projecting against any nearby static meshes
     decal.ShouldUseSceneStaticMeshes = false;
     decal.MeshesToProjectAgainst = this.MeshesToProjectAgainst;
-
-    if (decal.HasMeshToProjectAgainst)
-    {
-      // begin to perform the projection
-      // if you want the decal mesh to be generated use GenerateProjectedMeshImmediate,
-      // but beware it can easily lock up the main thread and cause skipped frames.
-      decal.GenerateProjectedMeshDelayed();
-    }
 
     return decal;
   }

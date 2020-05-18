@@ -115,7 +115,8 @@ namespace SamDriver.Decal
       trimJobHandles = new List<JobHandle>();
 
       // begin jobs
-      ScheduleTrimJobs(ref rawMeshes, ref allResultingTriangles, ref trimJobHandles, decalTransform, meshFilters, expectToTakeMoreThanFourFrames);
+      ScheduleTrimJobs(ref rawMeshes, ref allResultingTriangles, ref trimJobHandles, decalTransform, meshFilters,
+        expectToTakeMoreThanFourFrames, false);
     }
 
     public void Abort()
@@ -146,7 +147,8 @@ namespace SamDriver.Decal
       ref List<JobHandle> trimJobHandles,
       Transform decalTransform,
       IEnumerable<MeshFilter> meshFilters,
-      bool shouldUsePersistentAllocation = false
+      bool shouldUsePersistentAllocation = false,
+      bool immediatelyStart = false
     )
     {
       // directly accessing the Mesh data is only possible on primary thread, so
@@ -159,6 +161,12 @@ namespace SamDriver.Decal
 
         // mesh as read from meshFilter is defined in that object's local space
         var mesh = meshFilter.sharedMesh;
+        if (!mesh.isReadable)
+        {
+          // can only project against meshes set up to be readable
+          continue;
+        }
+
         NativeArray<int> indices = new NativeArray<int>(mesh.triangles, allocator);
         NativeArray<Float3> positions = new NativeArray<Float3>(mesh.vertexCount, allocator);
         NativeArray<Float3> normals = new NativeArray<Float3>(mesh.vertexCount, allocator);
@@ -184,9 +192,10 @@ namespace SamDriver.Decal
         rawMeshes.Add(rawMesh);
         allResultingTriangles.Add(resultingTriangles);
         trimJobHandles.Add(trimJobHandle);
-        
-        // start up the created job immediately
-        // if we were waiting until next frame (or longer) then probably best not to call this
+      }
+
+      if (immediatelyStart)
+      {
         JobHandle.ScheduleBatchedJobs();
       }
     }
@@ -228,7 +237,7 @@ namespace SamDriver.Decal
       var trimJobHandles = new List<JobHandle>();
 
       // begin jobs
-      ScheduleTrimJobs(ref rawMeshes, ref allResultingTriangles, ref trimJobHandles, decalTransform, meshFilters, false);
+      ScheduleTrimJobs(ref rawMeshes, ref allResultingTriangles, ref trimJobHandles, decalTransform, meshFilters, false, true);
 
       // immediately require jobs to complete, pausing main thread until they do
       var resultantTriangles = ReceiveTrimResults(allResultingTriangles, trimJobHandles).ToList();
