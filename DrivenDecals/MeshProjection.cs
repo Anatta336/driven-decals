@@ -161,7 +161,9 @@ namespace SamDriver.Decal
 
         // mesh as read from meshFilter is defined in that object's local space
         var mesh = meshFilter.sharedMesh;
-        if (!mesh.isReadable)
+
+        // when in play mode a mesh must be specifically set as readable
+        if (Application.isPlaying && !mesh.isReadable)
         {
           // can only project against meshes set up to be readable
           continue;
