@@ -1,5 +1,12 @@
 # Changelog
 
+## 2020-05-19
+### Changed
+- Significantly improved performance of generating the `RawMesh` in `MeshProjection` by avoiding garbage generation/collection. My test case went from 277ms to 26ms for that part of the process.
+- `MeshProjection` no longer automatically starts when instantiated, you should now call `Begin()`
+- Example `DecalSpawner` now passes hint to its generated decals that the projection process may take several frames to complete. That's important as the Unity jobs system allocates memory depending on how long it'll need to exist for.
+- Various bits of minor code tidying, removing unused `using` statements and so on.
+
 ## 2020-05-18
 ### Changed
 - Disabled a safety check so the ugly `UpToFiveTriangles` struct is no longer needed. Shouldn't have any externally visible effect.
