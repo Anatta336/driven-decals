@@ -1,12 +1,14 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SamDriver.Decal
 {
+  /// <summary>
+  /// Provides convenient access to positions of corners of a square.
+  /// </summary>
   internal static class Square
   {
-    public static int CornerCount = 4;
+    public const int CornerCount = 4;
 
     static Float2[] _centeredUnitSquareCorners;
     public static Float2[] CenteredUnitSquareCorners

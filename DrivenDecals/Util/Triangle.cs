@@ -4,6 +4,9 @@ using System.Collections;
 
 namespace SamDriver.Decal
 {
+  /// <summary>
+  /// Immutable representation of a triangle, with several useful methods.
+  /// </summary>
   internal struct Triangle : IEnumerable<Vertex>
   {
     [ReadOnly] public readonly bool IsPresent; // will default to false when struct is uninitialised

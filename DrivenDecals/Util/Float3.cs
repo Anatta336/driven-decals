@@ -1,25 +1,14 @@
 using UnityEngine;
 using Unity.Collections;
-using Unity.Jobs;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections;
-using System.IO;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace SamDriver.Decal
 {
   /// <summary>
-  /// Immutable Float3
+  /// Immutable Float3, suitable for use in Unity's job system.
   /// </summary>
   internal struct Float3
   {
-    [ReadOnly]
-    public readonly float x, y, z;
-
-    public Vector3 AsVector3 { get => new Vector3(x, y, z); }
+    [ReadOnly] public readonly float x, y, z;
 
     float? _magnitude;
     public float Magnitude
@@ -87,6 +76,7 @@ namespace SamDriver.Decal
     #endregion
 
     #region conversion
+    public Vector3 AsVector3 { get => new Vector3(x, y, z); }
     public static explicit operator Vector3(Float3 a) => a.AsVector3;
     #endregion
 

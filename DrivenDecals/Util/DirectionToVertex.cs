@@ -1,13 +1,14 @@
-using UnityEngine;
-
 namespace SamDriver.Decal
 {
+  /// <summary>
+  /// Immutable representation of difference between two points.
+  /// </summary>
   internal struct DirectionToVertex
   {
-    public Vertex start;
-    public Vertex target;
-    public Float3 direction;
-    public float distancetoTarget;
+    public readonly Vertex start;
+    public readonly Vertex target;
+    public readonly Float3 direction;
+    public readonly float distancetoTarget;
 
     public DirectionToVertex(Vertex start_, Vertex target_)
     {

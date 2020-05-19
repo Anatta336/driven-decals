@@ -1,33 +1,23 @@
 using UnityEngine;
 using Unity.Collections;
-using Unity.Jobs;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections;
-using System.IO;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace SamDriver.Decal
 {
+  /// <summary>
+  /// Immutable representation of an edge linking two vertices.
+  /// </summary>
   internal struct Edge
   {
-    [ReadOnly]
-    public readonly Vertex A, B;
+    [ReadOnly] public readonly Vertex A, B;
 
-    #region constructors
     public Edge(Vertex a_, Vertex b_)
     {
       this.A = a_;
       this.B = b_;
     }
-    #endregion
 
-    #region methods
     public Vertex GetVertexBetween(float tFromAToB) =>
       Vertex.CreateFromExisting(A, B, tFromAToB);
-
 
     /// <summary>
     /// Find the scalar t such that using it to linearly interpolating
@@ -40,7 +30,7 @@ namespace SamDriver.Decal
         goalPositionInDimension
     );
 
-    // <summary>
+    /// <summary>
     /// Linearly interpolates between positions of A and B, giving the value of just one dimension.
     /// </summary>
     public float LerpDimension(float t, Dimension dimension) =>
@@ -49,9 +39,5 @@ namespace SamDriver.Decal
         B.Position.ComponentInDimension(dimension),
         t
     );
-
-
-    #endregion
-
   }
 }
