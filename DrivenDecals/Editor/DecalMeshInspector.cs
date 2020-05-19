@@ -59,7 +59,7 @@ namespace SamDriver.Decal
           decal.HasTransformChangedSinceProjection &&
           !decal.IsAwaitingProjectionResult)
         {
-          decal.GenerateProjectedMeshDelayed();
+          decal.GenerateProjectedMeshImmediate();
         }
       }
     }
