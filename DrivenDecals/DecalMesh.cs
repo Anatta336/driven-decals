@@ -339,6 +339,7 @@ namespace SamDriver.Decal {
       EnforcePositiveScale();
 
       projectionInProgress = new MeshProjection(WorldMeshFilters(), transform, expectToTakeMoreThanFourFrames);
+      projectionInProgress.Begin();
       positionOfProjection = transform.position;
       scaleOfProjection = transform.localScale;
       rotationOfProjection = transform.rotation;

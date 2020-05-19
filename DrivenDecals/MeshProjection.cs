@@ -7,44 +7,27 @@ using System.Linq;
 
 namespace SamDriver.Decal
 {
+  /// <summary>
+  /// Handles generating the mesh for a projected decal.
+  /// 
+  /// Can operate asynchronously by creating an instance of MeshProjection, calling Begin(),
+  /// periodically checking IsReadyToComplete, and calling Complete() to retrieve the Mesh.
+  /// 
+  /// Can operate synchronously by calling the static function GenerateProjectedDecalMesh.
+  /// 
+  /// Both modes of operation use Unity's job system to spread the work between CPU cores.
+  /// 
+  /// TODO: What happens if target mesh has >65k vertices?
+  /// TODO: Can it handle quad topology target meshes?
+  /// </summary>
   public class MeshProjection
   {
     const int maxUInt16VertexCount = 65534; // slightly less than UInt16.MaxValue
 
     // when a triangle is "trimmed" to fit inside the quad region it may be replaced by
-    // multiple triangles. The most that can possible come from a triangle is 5.
-    // That happens when every triangle edge crosses the decal cube's borders twice.
+    // multiple triangles. The most that can possibly come from a triangle is 5.
+    // (Happens when every triangle edge crosses the decal cube's borders twice.)
     const int maxTrianglesFromTrimmedTriangle = 5;
-
-    #region helper structs
-    struct RawMesh : IDisposable
-    {
-      [ReadOnly]
-      public readonly NativeArray<int> Indices;
-      [ReadOnly]
-      public readonly NativeArray<Float3> Positions;
-      [ReadOnly]
-      public readonly NativeArray<Float3> Normals;
-
-      public int TriangleCount { get => Indices.Length / 3; }
-
-      public RawMesh(
-        NativeArray<int> indices_,
-        NativeArray<Float3> positions_,
-        NativeArray<Float3> normals_)
-      {
-        this.Indices = indices_;
-        this.Positions = positions_;
-        this.Normals = normals_;
-      }
-
-      public void Dispose()
-      {
-        Indices.Dispose();
-        Positions.Dispose();
-        Normals.Dispose(); 
-      }
-    }
 
     struct TrimTriangleParallelJob : IJobParallelFor
     {
@@ -82,7 +65,6 @@ namespace SamDriver.Decal
         }
       }
     }
-    #endregion
 
     public bool IsReadyToComplete
     {
@@ -105,10 +87,9 @@ namespace SamDriver.Decal
       this.meshFilters = meshFilters_;
       this.decalTransform = decalTransform_;
       this.expectToTakeMoreThanFourFrames = expectToTakeMoreThanFourFrames_;
-      Begin();
     }
 
-    void Begin()
+    public void Begin()
     {
       rawMeshes = new List<RawMesh>();
       allResultingTriangles = new List<NativeArray<Triangle>>();
@@ -169,16 +150,32 @@ namespace SamDriver.Decal
           continue;
         }
 
-        NativeArray<int> indices = new NativeArray<int>(mesh.triangles, allocator);
-        NativeArray<Float3> positions = new NativeArray<Float3>(mesh.vertexCount, allocator);
-        NativeArray<Float3> normals = new NativeArray<Float3>(mesh.vertexCount, allocator);
-        for (int i = 0; i < mesh.vertexCount; ++i)
+        for (int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; ++subMeshIndex)
         {
-          positions[i] = new Float3(mesh.vertices[i]);
-          normals[i] = new Float3(mesh.normals[i]);
+          var topology = mesh.GetTopology(subMeshIndex);
+          if (topology != MeshTopology.Triangles)
+          {
+            Debug.LogWarning($"Projecting against mesh of {meshFilter.gameObject.name} which has an unsupported {Enum.GetName(typeof(MeshTopology), topology)} topology. May cause projected decal to be a mess.");
+          }
         }
-        TransformPointsFromLocalAToLocalB(ref positions, meshFilter.transform, decalTransform);
-        TransformDirectionsFromLocalAToLocalB(ref normals, meshFilter.transform, decalTransform);
+
+        NativeArray<int> indices = new NativeArray<int>(mesh.triangles, allocator);
+        int vertexCount = mesh.vertexCount;
+
+        List<Vector3> positionsOnUnityMesh = new List<Vector3>();
+        mesh.GetVertices(positionsOnUnityMesh);
+        NativeArray<Float3> positions = new NativeArray<Float3>(vertexCount, allocator);
+
+        List<Vector3> normalsOnUnityMesh = new List<Vector3>();
+        mesh.GetNormals(normalsOnUnityMesh);
+        NativeArray<Float3> normals = new NativeArray<Float3>(vertexCount, allocator);
+
+        var meshTransform = meshFilter.transform;
+        for (int i = 0; i < vertexCount; ++i)
+        {
+          positions[i] = TransformPointFromLocalAToLocalB(positionsOnUnityMesh[i], meshTransform, decalTransform);
+          normals[i] = TransformDirectionFromLocalAToLocalB(normalsOnUnityMesh[i], meshTransform, decalTransform);
+        }
 
         // rawMesh is defined in decal's local space
         var rawMesh = new RawMesh(indices, positions, normals);
@@ -189,7 +186,7 @@ namespace SamDriver.Decal
 
         int batchCount = 1; // may want to tweak batchCount for performance
         var trimJobHandle = trimJob.Schedule(rawMesh.TriangleCount, batchCount);
-        // one [collective noun] of parallel jobs is created for each MeshFilter
+        // one set of parallel jobs is created for each MeshFilter
 
         rawMeshes.Add(rawMesh);
         allResultingTriangles.Add(resultingTriangles);
@@ -252,34 +249,26 @@ namespace SamDriver.Decal
       return BuildMesh(resultantTriangles, new Float3(decalTransform.localScale));
     }
 
-    static void TransformPointsFromLocalAToLocalB(
-      ref NativeArray<Float3> points,
+    static Float3 TransformPointFromLocalAToLocalB(
+      Vector3 localA,
       Transform transformA,
       Transform transformB)
     {
-      for (int i = 0; i < points.Length; ++i)
-      {
-        Vector3 localA = points[i].AsVector3;
-        Vector3 world = transformA.TransformPoint(points[i].AsVector3);
-        Vector3 localB = transformB.InverseTransformPoint(world);
-        points[i] = new Float3(localB);
-      }
+      Vector3 world = transformA.TransformPoint(localA);
+      Vector3 localB = transformB.InverseTransformPoint(world);
+      return new Float3(localB);
     }
 
-    static void TransformDirectionsFromLocalAToLocalB(
-      ref NativeArray<Float3> directions,
+    static Float3 TransformDirectionFromLocalAToLocalB(
+      Vector3 localA,
       Transform transformA,
       Transform transformB)
     {
-      for (int i = 0; i < directions.Length; ++i)
-      {
-        Quaternion aToWorld = transformA.rotation;
-        Quaternion worldToB = Quaternion.Inverse(transformB.rotation);
-        Quaternion aToB = worldToB * aToWorld;
-
-        Vector3 localB = aToB * directions[i].AsVector3;
-        directions[i] = new Float3(localB);
-      }
+      Quaternion aToWorld = transformA.rotation;
+      Quaternion worldToB = Quaternion.Inverse(transformB.rotation);
+      Quaternion aToB = worldToB * aToWorld;
+      Vector3 localB = aToB * localA;
+      return new Float3(localB);
     }
 
     static Triangle ConstructTriangleFromRawMesh(RawMesh rawMesh, int triangleIndex)

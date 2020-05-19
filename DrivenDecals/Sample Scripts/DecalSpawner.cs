@@ -9,8 +9,9 @@ using SamDriver.Decal;
 /// Responds to input button "Fire1" by (re)spawning a circle of decals and projecting
 /// them against a specified set of meshes.
 /// 
-/// A reminder that projecting decals using this system is (currently) slow, so using
-/// it to create decals during interactive segments is strongly discouraged.
+/// A reminder that projecting decals using this system is relatively slow, so using
+/// it to create decals during gameplay is discouraged.
+/// If you need decals that are cheap to spawn, search for viewspace decals.
 /// </summary>
 public class DecalSpawner : MonoBehaviour
 {
@@ -42,10 +43,15 @@ public class DecalSpawner : MonoBehaviour
     {
       if (decal.HasMeshToProjectAgainst)
       {
+        // because we're spawning several decals at once it's possible to take more than
+        // 4 frames for all the jobs to complete.
+        // (this changes how the temporary memory used by the jobs is allocated)
+        bool mayTakeMoreThanFourFrames = true;
+
         // begin to perform the projection
-        // if you want the decal mesh to be generated use GenerateProjectedMeshImmediate,
+        // if you want the decal mesh to be generated immediately use GenerateProjectedMeshImmediate,
         // but beware it can easily lock up the main thread and cause skipped frames.
-        decal.GenerateProjectedMeshDelayed();
+        decal.GenerateProjectedMeshDelayed(mayTakeMoreThanFourFrames);
       }
     }
   }
