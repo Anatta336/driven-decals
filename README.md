@@ -232,7 +232,7 @@ The decal mesh generation process is only partially threaded. Generation of the 
 A viewspace decal system would be a useful addition for when realtime creation is important.
 
 ## Authors
-Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](paypal.me/SamDriver336) (any support is very gratefully received)
+Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](https://www.paypal.me/SamDriver336) (any support is very gratefully received)
 
 ## Licence
 The source code of this project and associated documentation is licensed under the [MIT licence](../master/LICENSE.txt).
