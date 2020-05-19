@@ -224,12 +224,16 @@ All the sample shaders use the *Offset in viewspace* subgraph to shift the decal
 ## High Definition Render Pipeline
 Although this decal system works in the HDRP, I don't recommend its use. The HDRP is a deferred renderer which allows for PBR decals to be applied in a more efficient way than is possible in the forward renderer used by the URP. If you're looking to use decals in an HDRP project I recommend starting with the [Decal Projector](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@5.7/manual/Decal-Projector.html).
 
-There is also a known issue with the rendering of previews and thumbnails texture not working in the HDRP. As this decal system isn't intended for use in the HDRP, fixing that is a low priority.
+There is also an issue with the rendering of previews and thumbnails texture not working in the HDRP. As this decal system isn't intended for use in the HDRP, fixing that is a low priority.
 
 ## Future Work
 The decal mesh generation process is only partially threaded. Generation of the actual mesh still takes place on the main thread and can cause dropped frames if done during runtime.
 
 A viewspace decal system would be a useful addition for when realtime creation is important.
+
+## Known Issues
+### `undeclared identifier 'GetWorldSpaceNormalizeViewDir'`
+This is [a bug in Shader Graph](https://issuetracker.unity3d.com/issues/view-dir-node-plugged-into-vertex-position-creates-error-undeclared-identifier-getworldspacenormalizeviewdir) and by extension, Universal Render Pipeline. Updating your Universal Render Pipeline package to 7.2.0 or later should resolve it. You may need to restart Unity and/or open the affected shader graphs and click "save" to make them recompile.
 
 ## Authors
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](https://www.paypal.me/SamDriver336) (any support is very gratefully received)
