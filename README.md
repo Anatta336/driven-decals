@@ -181,13 +181,13 @@ Note that the `Legacy Shaders/Decal` shader is **not** compatible with this deca
 ![Shader selection on a new material, showing a listing of shaders filtered by the string "decal".](/documentation/images/decalShadersList.png)
 
 ## Generating Decals at Runtime
-It's possible to create, adjust, and project decals through scripts at runtime. Although the mesh projection process uses Unity's job system it still does enough work on the primary thread to cause noticeable dropped frames if used during gameplay. If you're looking for a way to generate bullet holes during gameplay, this is probably not the decal system for you.
+It's possible to create, adjust, and project decals through scripts at runtime. Although the mesh projection process uses Unity's job system it still does enough work on the primary thread to cause noticeable dropped frames if used during gameplay. If you're looking for a way to generate bullet holes during gameplay, this is probably not the decal system for you. I don't yet have any personal recommendations for a URP decal system for realtime generation, but you should look for something that uses viewspace projection instead of generating meshes.
 
 Doing things like changing a decal's opacity or even switching between DecalAssets is cheap to do. To see the effect during runtime you'll need to call `SetupMaterialPropertyBlock()` on the affected decal.
 
 To prevent name conflicts all the code used by this decal system is in the namespace `SamDriver.Decal`. So if your code needs to interact with it you may want to add a `using SamDriver.Decal;` at the top of your script's file.
 
-There's an [example script](../master/DrivenDecals/Sample%20Scripts/DecalSpawner.cs) with plenty of comments that generates decals is included in the Sample Scripts directory.
+There's an [example script](../master/DrivenDecals/Sample%20Scripts/DecalSpawner.cs) with plenty of comments that generates decals included in the Sample Scripts directory.
 
 To project against a mesh during play mode that mesh needs to fulfil some criteria:
 * Mesh's `isReadable` should true. For imported meshes that means ticking "Read/Write enabled" in the import options.
