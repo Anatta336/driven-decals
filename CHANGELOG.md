@@ -1,5 +1,11 @@
 # Changelog
 
+## 2020-05-26 - Perspective projection branch
+### Added
+- Perspective Grid decal asset, with material and shader. This produces a perspective projection effect rather than the orthogonal projection effect seen in other decals.
+### Changed
+- `Decal UV` subgraph now has support for perspective-type decals. It defaults to values which mean there's no perspective effect (so it still works in standard decals) but for now it is doing needless work for non-perspective decals. It is also no longer actually reading the UV values stored on the mesh, so those could be removed from the system as a whole.
+
 ## 2020-05-19
 ### Changed
 - Significantly improved performance of generating the `RawMesh` in `MeshProjection` by avoiding garbage generation/collection. My test case went from 277ms to 26ms for that part of the process.
