@@ -1,5 +1,5 @@
 {
-    "name": "SamDriver.DrivenDecals.Editor",
+    "name": "com.samdriver.driven-decals.editor",
     "references": [
         "GUID:22b65885038b8ac4fb6e944d0774c114"
     ],

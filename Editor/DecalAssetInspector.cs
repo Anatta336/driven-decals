@@ -7,17 +7,10 @@ namespace SamDriver.Decal
   [CanEditMultipleObjects]
   public class DecalAssetInspector : Editor
   {
-    static string pathToEditorMaterials = "Assets/DrivenDecals/Editor";
+    private const string pkgPath = "Packages/com.samdriver.driven-decals/Editor/";
     static Material FetchEditorMaterial(string materialName)
-    {
-      var guids = AssetDatabase.FindAssets($"{materialName} t:Material", new string[] {pathToEditorMaterials});
-      if (guids == null || guids.Length == 0)
-      {
-        Debug.LogWarning($"Unable to find {materialName} material in {pathToEditorMaterials}. DecalAsset's inspector may not work correctly without it.");
-        return null;
-      }
-      var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-      return (Material)AssetDatabase.LoadAssetAtPath(path, typeof(Material));
+    { 
+      return AssetDatabase.LoadAssetAtPath<Material>($"{pkgPath}{materialName}.mat");
     }
 
     Material _thumbnailMaterial;
