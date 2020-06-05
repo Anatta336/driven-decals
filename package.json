@@ -1,6 +1,6 @@
 {
     "name": "com.samdriver.driven-decals",
-    "version": "0.0.6",
+    "version": "0.7.0",
     "displayName": "Driven Decals",
     "description": "A mesh-based PBR decal system for Unity. Intended primarily for use with the Universal Render Pipeline's forward renderer.",
     "unity": "2018.3",
