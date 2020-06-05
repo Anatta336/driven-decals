@@ -1,30 +1,9 @@
-# Driven Decals
-A mesh-based PBR decal system for Unity. Intended primarily for use with the Universal Render Pipeline's forward renderer.
-
-[60 second introduction video.](https://www.youtube.com/watch?v=5AyNvbTngV0)
-
-![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](images/demonstration.png)
-
-## Key Features
-* Creates meshes that behave like any other mesh in your scene. Making them easier to work with and use with other features.
-* Easy to customise using Unity's Shader Graph.
-* Low rendering cost and full compatibility with URP's forward renderer makes it ideal for use in XR.
-* Custom inspectors that provide immediate in-editor feedback.
-* Support for multi-object editing and undo.
-
-## Key Limitations
-* Decal generation is relatively slow, so not recommended as a way to dynamically place bullet holes during gameplay.
-* Inefficient compared to methods available to deferred renderers such as the high definition render pipeline (HDRP).
-
-## Changelog
-[Human-friendly changelog](CHANGELOG.md)
-
-## Contents
+# Contents
+- [Contents](#contents)
 - [Driven Decals](#driven-decals)
   - [Key Features](#key-features)
   - [Key Limitations](#key-limitations)
   - [Changelog](#changelog)
-  - [Contents](#contents)
   - [Getting Started](#getting-started)
     - [Requirements](#requirements)
     - [Installation](#installation)
@@ -53,6 +32,35 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
   - [Authors](#authors)
   - [Licence](#licence)
 
+# Driven Decals
+A mesh-based PBR decal system for Unity. For use with the Universal Render Pipeline's forward renderer.
+
+There are broadly two approaches to rendering decals in realtime graphics:
+* Generate a projected mesh for each decal instance in the scene.
+* Dynamically project the decal in view-space using a fragment shader.
+
+Each approach has its strengths and many projects benefit from using both for different situations. For example *Half-Life: Alyx* appears to use projected mesh decals for some static scenery details, and view-space projected decals for dynamic effects like bullet holes.
+
+This decal system only deals with creating projected meshes, so you shouldn't expect it to be a complete solution to every decal use case.
+
+[60 second introduction video.](https://www.youtube.com/watch?v=5AyNvbTngV0)
+
+![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/documentation~/images/demonstration.png)
+
+## Key Features
+* Creates meshes that behave like any other mesh in your scene. Making them easier to work with and use with other features.
+* Easy to customise using Unity's Shader Graph.
+* Low rendering cost and full compatibility with URP's forward renderer makes it ideal for use in XR.
+* Custom inspectors that provide immediate in-editor feedback.
+* Support for multi-object editing and undo.
+
+## Key Limitations
+* Decal generation is relatively slow, so not recommended as a way to dynamically place bullet holes or other effects during gameplay.
+* Inefficient compared to methods available to deferred renderers such as the high definition render pipeline (HDRP).
+
+## Changelog
+[Human-friendly changelog](CHANGELOG.md)
+
 ## Getting Started
 ### Requirements
 * Unity 2019.3.0f6 or later, using the universal render pipeline (URP) version 7.2.1 or later.
@@ -60,7 +68,7 @@ A mesh-based PBR decal system for Unity. Intended primarily for use with the Uni
 In theory it should work in the LWRP and Unity versions as far back as 2018. But it looks like shader graph really doesn't care about cross-version compatibility. If you need this to work in those earlier versions I may be able to put together something compatible with some extra work. 
 
 ### Installation
-1. Find the manifest.json file in the Packages folder of your project and edit it to look like this:
+1. Find the `manifest.json` file in the Packages folder of your project and edit it to include this package:
 ```js
 {
   "dependencies": {
@@ -69,7 +77,7 @@ In theory it should work in the LWRP and Unity versions as far back as 2018. But
   },
 }
 ```
-2. Return to the unity project and wait for the package to downloan & import.
+2. Return to the Unity project and wait for the package to download and import.
 
 ### Your First Decal
 You can create a decal object in your scene using either the right-click menu in the Hierarchy window or the GameObject menu. Look for *3D Object* → *Driven Decal*.
@@ -259,8 +267,8 @@ A viewspace decal system would be a useful addition for when realtime creation i
 ### `undeclared identifier 'GetWorldSpaceNormalizeViewDir'`
 This is [a bug in Shader Graph](https://issuetracker.unity3d.com/issues/view-dir-node-plugged-into-vertex-position-creates-error-undeclared-identifier-getworldspacenormalizeviewdir) and by extension, Universal Render Pipeline. Updating your Universal Render Pipeline package to 7.2.0 or later should resolve it. You may need to restart Unity and/or open the affected shader graphs and click "save" to make them recompile.
 
-## Authors
-Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](https://www.paypal.me/SamDriver336) (any support is very gratefully received)
+### Can only project against `MeshFilter` meshes
+Components such as Unity's terrain system use meshes but don't use `MeshFilter` and so are incompatible with this system. 
 
 ## Licence
 The source code of this project and associated documentation is licensed under the [MIT licence](../master/LICENSE.txt).
