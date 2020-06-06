@@ -1,38 +1,36 @@
-# Contents
-- [Contents](#contents)
-- [Driven Decals](#driven-decals)
-  - [Key Features](#key-features)
-  - [Key Limitations](#key-limitations)
-  - [Changelog](#changelog)
-  - [Getting Started](#getting-started)
-    - [Requirements](#requirements)
-    - [Installation](#installation)
-    - [Your First Decal](#your-first-decal)
-  - [Creating Your Own Decals](#creating-your-own-decals)
-    - [1. Texture](#1-texture)
-    - [2. Material](#2-material)
-    - [3. DecalAsset](#3-decalasset)
-    - [4. Decal object](#4-decal-object)
-  - [Overview](#overview)
-    - [DecalMesh](#decalmesh)
-      - [Projection Targets](#projection-targets)
-      - [zFade](#zfade)
-      - [Angle Fade](#angle-fade)
-      - [Draw Order](#draw-order)
-    - [DecalAsset](#decalasset)
-    - [Material](#material)
-  - [Generating Decals at Runtime](#generating-decals-at-runtime)
-  - [Static Batching](#static-batching)
-  - [Baked Lighting](#baked-lighting)
-  - [Custom Shaders](#custom-shaders)
-  - [High Definition Render Pipeline](#high-definition-render-pipeline)
-  - [Future Work](#future-work)
-  - [Known Issues](#known-issues)
-    - [`undeclared identifier 'GetWorldSpaceNormalizeViewDir'`](#undeclared-identifier-getworldspacenormalizeviewdir)
-  - [Authors](#authors)
-  - [Licence](#licence)
+# Contents <!-- omit in toc -->
+- [Key Features](#key-features)
+- [Key Limitations](#key-limitations)
+- [Changelog](#changelog)
+- [Getting Started](#getting-started)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Your First Decal](#your-first-decal)
+- [Creating Your Own Decals](#creating-your-own-decals)
+  - [1. Texture](#1-texture)
+  - [2. Material](#2-material)
+  - [3. DecalAsset](#3-decalasset)
+  - [4. Decal object](#4-decal-object)
+- [Overview](#overview)
+  - [DecalMesh](#decalmesh)
+    - [Projection Targets](#projection-targets)
+    - [zFade](#zfade)
+    - [Angle Fade](#angle-fade)
+    - [Draw Order](#draw-order)
+  - [DecalAsset](#decalasset)
+  - [Material](#material)
+- [Generating Decals at Runtime](#generating-decals-at-runtime)
+- [Static Batching](#static-batching)
+- [Baked Lighting](#baked-lighting)
+- [Custom Shaders](#custom-shaders)
+- [High Definition Render Pipeline](#high-definition-render-pipeline)
+- [Future Work](#future-work)
+- [Known Issues](#known-issues)
+  - [`undeclared identifier 'GetWorldSpaceNormalizeViewDir'`](#undeclared-identifier-getworldspacenormalizeviewdir)
+  - [Can only project against `MeshFilter` meshes](#can-only-project-against-meshfilter-meshes)
+- [Licence](#licence)
 
-# Driven Decals
+# Driven Decals <!-- omit in toc -->
 A mesh-based PBR decal system for Unity. For use with the Universal Render Pipeline's forward renderer.
 
 There are broadly two approaches to rendering decals in realtime graphics:
@@ -254,14 +252,12 @@ The *DecalAsset* inspector will inform you if you use a material that's lacking 
 All the sample shaders use the *Offset in viewspace* subgraph to shift the decal's vertices a short distance towards the camera when they are rendered. This should prevent z-fighting artefacts under typical use. If you are using decals on very distant objects - especially if they're viewed at a grazing angle - you may need to increase the offset distance or customise the offset calculation.
 
 ## High Definition Render Pipeline
-Although this decal system works in the HDRP, I don't recommend its use. The HDRP is a deferred renderer which allows for PBR decals to be applied in a more efficient way than is possible in the forward renderer used by the URP. If you're looking to use decals in an HDRP project I recommend starting with the [Decal Projector](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@5.7/manual/Decal-Projector.html).
+If you're looking to use decals in an HDRP project I recommend starting with the built-in [Decal Projector](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@5.7/manual/Decal-Projector.html). That is a view-space decal projector system, but because the HDRP is a deferred renderer many of the advantages of using a mesh projection decal system are lost.
 
-There is also an issue with the rendering of previews and thumbnails texture not working in the HDRP. As this decal system isn't intended for use in the HDRP, fixing that is a low priority.
+There is also an issue with the rendering of previews and thumbnails not working in the HDRP. Because this decal system isn't intended for use in the HDRP fixing that is a low priority.
 
 ## Future Work
-The decal mesh generation process is only partially threaded. Generation of the actual mesh still takes place on the main thread and can cause dropped frames if done during runtime.
-
-A viewspace decal system would be a useful addition for when realtime creation is important.
+A well integrated view-space projection decal system would be a useful addition, making this a more complete decal solution.
 
 ## Known Issues
 ### `undeclared identifier 'GetWorldSpaceNormalizeViewDir'`
