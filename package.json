@@ -3,16 +3,16 @@
     "version": "0.7.0",
     "displayName": "Driven Decals",
     "description": "A mesh-based PBR decal system for Unity. Intended primarily for use with the Universal Render Pipeline's forward renderer.",
-    "unity": "2018.3",
+    "unity": "2019.1",
     "dependencies": {
-        "com.unity.render-pipelines.universal" : "7.3.1"
-   },
-   "keywords": [
-      "Decals"
+        "com.unity.render-pipelines.universal": "7.3.1"
+    },
+    "keywords": [
+        "Decals"
     ],
     "author": {
-      "name": "Sam Driver",
-      "url": "https://samdriver.xyz"
-    }
-  }
-  
+        "name": "Sam Driver",
+        "url": "https://samdriver.xyz"
+    },
+    "hideInEditor": false
+}
