@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 
@@ -38,9 +39,13 @@ namespace SamDriver.Decal
       Selection.activeObject = decalObject;
     }
 
+    const string sampleDecalsPath = "Packages/com.samdriver.driven-decals/Runtime/Sample Decals/";
     static DecalAsset FetchSampleDecalAsset()
     {
-      return AssetDatabase.LoadAssetAtPath<DecalAsset>("Packages/com.samdriver.driven-decals/Runtime/Sample Decals/Simple/Grid.asset");
+      var path = Path.Combine(sampleDecalsPath, "Simple/Grid.asset");
+      var decal = AssetDatabase.LoadAssetAtPath<DecalAsset>(path);
+      if (decal == null) throw new FileNotFoundException($"Couldn't find Decal Asset at {path}");
+      return decal;
     }
   }
 }

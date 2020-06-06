@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,10 +8,13 @@ namespace SamDriver.Decal
   [CanEditMultipleObjects]
   public class DecalAssetInspector : Editor
   {
-    private const string pkgPath = "Packages/com.samdriver.driven-decals/Editor/";
+    const string editorResourcesPath = "Packages/com.samdriver.driven-decals/Editor/Resources/";
     static Material FetchEditorMaterial(string materialName)
-    { 
-      return AssetDatabase.LoadAssetAtPath<Material>($"{pkgPath}{materialName}.mat");
+    {
+      var path = Path.Combine(editorResourcesPath, $"Materials/{materialName}.mat");
+      var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+      if (material == null) throw new FileNotFoundException($"Couldn't find material file at {path}");
+      return material;
     }
 
     Material _thumbnailMaterial;
