@@ -47,17 +47,17 @@ namespace SamDriver.Decal
         static int boundsID = Shader.PropertyToID("_Bounds");
 
         static string[] essentialMaterialProperties = new string[] {
-      "_DiffuseAlpha",
-      "_Bounds",
-    };
+            "_DiffuseAlpha",
+            "_Bounds",
+        };
         static string[] supportedMaterialProperties = new string[] {
-      "_Opacity",
-      "_FlipU",
-      "_FlipV",
-      "_ZFadeStart",
-      "_MinAngleFadeRadians",
-      "_MaxAngleFadeRadians",
-    };
+            "_Opacity",
+            "_FlipU",
+            "_FlipV",
+            "_ZFadeStart",
+            "_MinAngleFadeRadians",
+            "_MaxAngleFadeRadians",
+        };
 
         static Color previewBackColour = Color.white;
         static float maxPreviewHeight = 520f;
