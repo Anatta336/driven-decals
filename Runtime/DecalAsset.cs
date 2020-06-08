@@ -18,6 +18,10 @@ namespace SamDriver.Decal
         [SerializeField] float uMin = 0f, vMin = 0f, uMax = 1f, vMax = 1f;
 
         // this block are all set by UpdateDerivedValues()
+
+        /// <summary>
+        /// .x is uMin, .y is vMin, .z is uMax, .w is vMax
+        /// </summary>
         public Vector4 BoundsAsVector4 { get; private set; }
         public float UVWidth { get; private set; }
         public float UVHeight { get; private set; }
