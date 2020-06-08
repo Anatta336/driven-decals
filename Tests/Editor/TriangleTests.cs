@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SamDriver.Decal.Test
 {
-    public class TriangleSuite
+    public class TriangleTests
     {
         // reminder you can mark a function with [SetUp] or [TearDown] to automatically
         // call it before or after each function marked with [Test]
