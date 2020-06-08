@@ -259,6 +259,10 @@ There is also an issue with the rendering of previews and thumbnails not working
 ## Future Work
 A well integrated view-space projection decal system would be a useful addition, making this a more complete decal solution.
 
+Some degree of integration with Unity's level of detail system would allow a decal to switch between meshes along with the scene mesh(es) that it's projected against.
+
+A more thorough set of tests.
+
 ## Known Issues
 ### `undeclared identifier 'GetWorldSpaceNormalizeViewDir'`
 This is [a bug in Shader Graph](https://issuetracker.unity3d.com/issues/view-dir-node-plugged-into-vertex-position-creates-error-undeclared-identifier-getworldspacenormalizeviewdir) and by extension, Universal Render Pipeline. Updating your Universal Render Pipeline package to 7.2.0 or later should resolve it. You may need to restart Unity and/or open the affected shader graphs and click "save" to make them recompile.

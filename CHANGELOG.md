@@ -2,10 +2,11 @@
 
 ## [0.7.0] - 2020-06-05
 ## Added
-- Thanks to [Kenny5](https://github.com/Kenny5) the decal system can now be added to a project through Unity's package manager system rather than manually downloading the .package file. See the [README](README.md) for updated installation instructions.
+- Thanks to [Kenny5](https://github.com/Kenny5) the decal system can now be added to a project through the Unity Package Manager system rather than manually downloading the .package file. See the [README](README.md) for updated installation instructions.
+- Tests for Triangle and DecalAsset. Code coverage is lower than it should be, but it's a start.
 
 ### Changed
-- Thanks to [Kenny5](https://github.com/Kenny5) to support use in Unity's package manager many directories have been moved around.
+- Thanks to [Kenny5](https://github.com/Kenny5) many directories have been moved around to support Unity's package manager.
 - This changelog now uses [semantic version numbers](https://semver.org/) instead of just dates. Note that the major version number is still 0, indicating the project is in the initial development phase so minor version increases may make breaking changes.
 - Rearranged the documentation. The README is now far shorter with the bulk of documentation [moved to its own file]((documentation~/DrivenDecals.md). 
 
