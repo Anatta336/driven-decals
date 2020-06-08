@@ -22,10 +22,11 @@ namespace SamDriver.Decal
             {
                 if (!_geometryNormal.HasValue)
                 {
-                    _geometryNormal = Float3.CrossProduct(
-                        B.Position - A.Position,
-                        C.Position - A.Position
-                    );
+                    _geometryNormal = Float3.Normalize(
+                        Float3.CrossProduct(
+                            B.Position - A.Position,
+                            C.Position - A.Position
+                    ));
                 }
                 return _geometryNormal.Value;
             }
