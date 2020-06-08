@@ -101,7 +101,7 @@ namespace SamDriver.Decal
             {
                 if (shouldUseAllSceneStaticMeshes.boolValue)
                 {
-                    EditorGUILayout.HelpBox("Cannot project mesh until the decal is placed close to a static mesh in the scene.",
+                    EditorGUILayout.HelpBox("Cannot project mesh until the decal is placed close to a static mesh in the scene, or \"All static meshes\" is unticked and at least one target mesh is selected.",
                       MessageType.Warning);
                 }
                 else
