@@ -9,9 +9,9 @@ Each approach has its strengths and many projects benefit from using both for di
 
 This decal system only deals with creating projected meshes, so you shouldn't expect it to be a complete solution to every decal use case.
 
-[60 second introduction video.](https://www.youtube.com/watch?v=5AyNvbTngV0)
+[60 second introduction video.](https://www.youtube.com/watch?v=zFEtdRrD2D4)
 
-![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/documentation~/images/demonstration.png)
+![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/Documentation~/images/demonstration.png)
 
 ## Key Features
 * Creates meshes that behave like any other mesh in your scene. Making them easier to work with and use with other features.
@@ -22,7 +22,7 @@ This decal system only deals with creating projected meshes, so you shouldn't ex
 
 ## Key Limitations
 * Decal mesh generation is relatively slow. This system is not recommended as a way to dynamically place bullet holes or other effects during gameplay.
-* Once the decal mesh is generated it remains as it is and will not adapt to the other meshes changing. This system will not work to add decals on skinned mesh renderers or other meshes that get distorted during play.
+* Once the decal mesh is generated it remains as it is and will not adapt to the other meshes changing. This system will not work nicely with skinned mesh renderers or other meshes that get distorted at runtime.
 
 ## Changelog
 [Human-friendly changelog](CHANGELOG.md)
@@ -34,7 +34,13 @@ This decal system only deals with creating projected meshes, so you shouldn't ex
 In theory it should work in the LWRP and Unity versions as far back as 2018. But it looks like shader graph really doesn't care about cross-version compatibility. If you need this to work in those earlier versions I may be able to put together something compatible with some extra work. 
 
 ### Installation
-1. Find the `manifest.json` file in the Packages folder of your project and edit it to look like this:
+1. Within your project open the Package Manager from *Window* → *Package Manager*
+2. Click the **+** icon at the top-left of the window and select "Add package from git URL..."
+3. Paste in `https://github.com/Anatta336/driven-decals.git` and click "Add"
+4. Wait a minute. It looks a lot like nothing is happening, but Unity is busy thinking about packages.
+5. When installed you'll see "Driven Decals" listed in the window.
+
+**Or** you can manually modify your project's `manifest.json` file in the Packages folder to include:
 ```js
 {
   "dependencies": {
@@ -43,10 +49,9 @@ In theory it should work in the LWRP and Unity versions as far back as 2018. But
   },
 }
 ```
-2. Return to your Unity project and wait for the package to download and import.
 
 ### Documentation
-[Extensive documentation including step-by-step instructions to get you started is available.](documentation~/DrivenDecals.md)
+[Extensive documentation including step-by-step instructions to get you started is available.](Documentation~/DrivenDecals.md)
 
 ## Authors
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](https://www.paypal.me/SamDriver336) (any support is very gratefully received)
