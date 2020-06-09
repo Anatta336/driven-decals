@@ -1,0 +1,18 @@
+{
+    "name": "com.samdriver.driven-decals",
+    "version": "0.7.0",
+    "displayName": "Driven Decals",
+    "description": "A projected-mesh PBR decal system for the Universal Render Pipeline.",
+    "unity": "2019.3",
+    "dependencies": {
+        "com.unity.render-pipelines.universal": "7.3.1"
+    },
+    "keywords": [
+        "Decals"
+    ],
+    "author": {
+        "name": "Sam Driver",
+        "url": "https://samdriver.xyz"
+    },
+    "hideInEditor": false
+}
