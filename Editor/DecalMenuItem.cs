@@ -39,12 +39,11 @@ namespace SamDriver.Decal
             Selection.activeObject = decalObject;
         }
 
-        const string sampleDecalsPath = "Packages/com.samdriver.driven-decals/Runtime/Sample Decals/";
+        const string gridDecalPath = "Packages/com.samdriver.driven-decals/Runtime/Grid Decal/Grid.asset";
         static DecalAsset FetchSampleDecalAsset()
         {
-            var path = Path.Combine(sampleDecalsPath, "Simple/Grid.asset");
-            var decal = AssetDatabase.LoadAssetAtPath<DecalAsset>(path);
-            if (decal == null) throw new FileNotFoundException($"Couldn't find Decal Asset at {path}");
+            var decal = AssetDatabase.LoadAssetAtPath<DecalAsset>(gridDecalPath);
+            if (decal == null) throw new FileNotFoundException($"Couldn't find Decal Asset at {gridDecalPath}");
             return decal;
         }
     }

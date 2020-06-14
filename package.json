@@ -1,6 +1,6 @@
 {
     "name": "com.samdriver.driven-decals",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "displayName": "Driven Decals",
     "description": "A projected-mesh PBR decal system for the Universal Render Pipeline.",
     "unity": "2019.3",
@@ -14,5 +14,17 @@
         "name": "Sam Driver",
         "url": "https://samdriver.xyz"
     },
-    "hideInEditor": false
+    "hideInEditor": false,
+    "samples": [
+        {
+            "displayName": "Fasteners",
+            "description": "A small collection of decals depicting bolt heads, screwheads, and other fasteners.",
+            "path": "Samples~/Decals/Fasteners"
+        },
+        {
+            "displayName": "Spawner",
+            "description": "An example script that spawns a circular pattern of decals.",
+            "path": "Samples~/Scripts/Spawner"
+        }
+    ]
 }

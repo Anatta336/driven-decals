@@ -73,7 +73,7 @@ Material:
     m_Colors:
     - Color_535B7939: {r: 0.51886785, g: 0.51886785, b: 0.51886785, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Bounds: {r: 0.02, g: 0.58285713, b: 0.3342857, a: 0.9114286}
+    - _Bounds: {r: 0, g: 0, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColourForAlpha: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
