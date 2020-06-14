@@ -8,7 +8,7 @@
 ### Changed
 - Thanks to [Kenny5](https://github.com/Kenny5) many directories have been moved around to support Unity's package manager.
 - This changelog now uses [semantic version numbers](https://semver.org/) instead of just dates. Note that the major version number is still 0, indicating the project is in the initial development phase so even minor version increases may make breaking changes. I expect to move to 1.0.0 fairly soon.
-- Rearranged the documentation. The README is now far shorter with the bulk of documentation [moved to its own file]((documentation~/DrivenDecals.md). 
+- Rearranged the documentation. The README is now far shorter with the bulk of documentation [moved to its own file](Documentation~/DrivenDecals.md). 
 - Updated the 60 second introduction video to use the package manager method of installation.
 
 ### Fixed
