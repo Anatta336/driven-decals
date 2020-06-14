@@ -607,10 +607,19 @@ namespace SamDriver.Decal
                 {
                     positions.Add(vertex.Position.AsVector3);
                     normals.Add((vertex.Normal * localScale).AsVector3);
-                    uvs.Add(new Vector2(
-                        vertex.Position.x + 0.5f,
-                        vertex.Position.y + 0.5f
-                    ));
+                    
+                    // store two of the barycentric coordinates in UV0 (third can be reconstructed)
+                    Vector2 barycentric = new Vector2(0f, 0f);
+                    if (vertexIndexWithinTriangle == 1)
+                    {
+                        barycentric.x = 1f;
+                    }
+                    else if (vertexIndexWithinTriangle == 2)
+                    {
+                        barycentric.y = 1f;
+                    }
+                    uvs.Add(barycentric);
+
                     indices.Add(triangleIndex * 3 + vertexIndexWithinTriangle);
                     ++vertexIndexWithinTriangle;
                 }
