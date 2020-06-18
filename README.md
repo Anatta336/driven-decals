@@ -5,7 +5,7 @@ There are broadly two approaches to rendering projected decals in real-time grap
 * Generate a projected mesh for each decal instance in the scene.
 * Dynamically project the decal in view-space using a fragment shader.
 
-Each approach has its strengths and many projects benefit from using both for different situations. For example *Half-Life: Alyx* appears to use projected mesh decals for some static scenery details, and view-space projected decals for dynamic effects like bullet holes.
+Each approach has its strengths and many projects benefit from using both for different situations. For example *Half-Life: Alyx* appears to use projected mesh decals for some static scenery details, and view-space projected decals for dynamic effects like bullet holes. I've [written a little interactive article about how decals can be rendered](https://samdriver.xyz/articles/decalsIntro.htm) if you would like to know more.
 
 This decal system only deals with creating projected meshes, so you shouldn't expect it to be a complete solution to every decal use case.
 
@@ -51,7 +51,7 @@ In theory it should work in the LWRP and Unity versions as far back as 2018. But
 ```
 
 ### Documentation
-[Extensive documentation including step-by-step instructions to get you started is available.](Documentation~/DrivenDecals.md)
+[Extensive documentation including step-by-step instructions to get you started.](Documentation~/DrivenDecals.md)
 
 ## Authors
 Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](https://www.paypal.me/SamDriver336) (any support is very gratefully received)
