@@ -34,6 +34,7 @@ This decal system only deals with creating projected meshes, so you shouldn't ex
 In theory it should work in the LWRP and Unity versions as far back as 2018. But it looks like shader graph really doesn't care about cross-version compatibility. If you need this to work in those earlier versions I may be able to put together something compatible with some extra work. 
 
 ### Installation
+0. Make sure you have Git installed on your machine. [For Windows](https://gitforwindows.org/) or [MacOS](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git#_installing_on_macos)
 1. Within your project open the Package Manager from *Window* → *Package Manager*
 2. Click the **+** icon at the top-left of the window and select "Add package from git URL..."
 3. Paste in `https://github.com/Anatta336/driven-decals.git` and click "Add"
