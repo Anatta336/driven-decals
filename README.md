@@ -40,6 +40,7 @@ In theory it should work in the LWRP and Unity versions as far back as 2018. But
 3. Paste in `https://github.com/Anatta336/driven-decals.git` and click "Add"
 4. Wait a minute. It looks a lot like nothing is happening, but Unity is busy thinking about packages.
 5. When installed you'll see "Driven Decals" listed in the window.
+6. (Optional) You can install the sample decal assets and/or sample spawner script from the package manager window. I recommend getting the sample decals so you can quickly start testing.
 
 **Or** you can manually modify your project's `manifest.json` file in the Packages folder to include:
 ```js
