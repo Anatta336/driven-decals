@@ -17,27 +17,27 @@ namespace SamDriver.Decal
             return material;
         }
 
-        Material _thumbnailMaterial;
-        Material thumbnailMaterial
+        static Material _thumbnailMaterial;
+        static Material thumbnailMaterial
         {
             get
             {
                 if (_thumbnailMaterial == null)
                 {
-                    _thumbnailMaterial = FetchEditorMaterial("EditorDecalThumbnail");
+                    _thumbnailMaterial = new Material(FetchEditorMaterial("EditorDecalThumbnail"));
                 }
                 return _thumbnailMaterial;
             }
         }
 
-        Material _overlayBoundsMaterial;
-        Material overlayBoundsMaterial
+        static Material _overlayBoundsMaterial;
+        static Material overlayBoundsMaterial
         {
             get
             {
                 if (_overlayBoundsMaterial == null)
                 {
-                    _overlayBoundsMaterial = FetchEditorMaterial("EditorDecalOverlayBounds");
+                    _overlayBoundsMaterial = new Material(FetchEditorMaterial("EditorDecalOverlayBounds"));
                 }
                 return _overlayBoundsMaterial;
             }
@@ -292,6 +292,7 @@ namespace SamDriver.Decal
             // utility.camera.Render();
 
             // But in this case we just blit to camera's target
+
             thumbnailMaterial.SetVector(boundsID, decalAsset.BoundsAsVector4);
             thumbnailMaterial.SetColor(colourForAlphaID, previewBackColour);
             Graphics.Blit(decalAsset.diffuseAlpha, utility.camera.targetTexture, thumbnailMaterial, 0);
