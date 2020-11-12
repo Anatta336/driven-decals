@@ -4,6 +4,7 @@
 ### Changed
 - Moved sample decals and the sample spawner script into `Samples~`. You can now optionally import which samples you wish from the Unity package manager.
 - `DecalAssetInspector` keeps a copy of the materials it uses rather than modifying the assets directly.
+- Updated installation instructions to include needing Git already installed.
 
 ### Removed
 - Removed the "postit code" sample decal. It's not likely to be practically useful and doesn't have any greater educational use than the other samples.
