@@ -11,6 +11,11 @@ This decal system only deals with creating projected meshes, so you shouldn't ex
 
 [60 second introduction video.](https://www.youtube.com/watch?v=zFEtdRrD2D4)
 
+## Status - 2021-04-06
+Hello! This package isn't kidding about having a "preview" version number. You are of course welcome to use it as you like, but please be aware there are known missing features and almost certainly bugs.
+
+I am still working on this and intend to bring it up to release quality. At the moment I'm busy working full-time on projects away from Unity, so progress is not fast. Pull requests are always welcome if you're feeling inspired!
+
 ![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/Documentation~/images/demonstration.png)
 
 ## Key Features
