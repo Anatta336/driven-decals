@@ -394,6 +394,9 @@ namespace SamDriver.Decal
                 {
                     // only interested in meshes on static objects
                     if (!meshFilter.gameObject.isStatic) continue;
+                    
+                    // also handle edge case where empty meshfilters exist in the scene
+                    if (meshFilter.sharedMesh == null) continue;
 
                     // don't project against other decals
                     #if UNITY_2019_2_OR_NEWER
