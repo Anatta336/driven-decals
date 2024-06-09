@@ -1,21 +1,26 @@
 # Driven Decals
 A mesh-based PBR decal system for Unity. For use with the Universal Render Pipeline's forward renderer.
 
+These types of decals are generally good for static things like cracks and graffiti added into the game during level design (or during an initial procedural generation process).
+
+This way of handling decals is bad for things like adding bullet holes when the player shoots. Instead you should use a shader to do projection in realtime.
+
 There are broadly two approaches to rendering projected decals in real-time graphics:
 * Generate a projected mesh for each decal instance in the scene.
 * Dynamically project the decal in view-space using a fragment shader.
 
-Each approach has its strengths and many projects benefit from using both for different situations. For example *Half-Life: Alyx* appears to use projected mesh decals for some static scenery details, and view-space projected decals for dynamic effects like bullet holes. I've [written a little interactive article about how decals can be rendered](https://samdriver.xyz/articles/decalsIntro.htm) if you would like to know more.
+Each approach has its strengths and many projects benefit from using both for different situations. For example *Half-Life: Alyx* uses projected mesh decals for some static scenery details, and view-space projected decals for dynamic effects like bullet holes. I've [written a little interactive article about how decals can be rendered](https://samdriver.xyz/articles/decalsIntro.htm) if you would like to know more.
 
 This decal system only deals with creating projected meshes, so you shouldn't expect it to be a complete solution to every decal use case.
 
 [60 second introduction video.](https://www.youtube.com/watch?v=zFEtdRrD2D4)
 
-## Status - 2021-04-06
-Hello! This package isn't kidding about having a "preview" version number. You are of course welcome to use it as you like, but please be aware there are known missing features and almost certainly bugs.
+## Status - Last updated 2024-06-09
+Hello! This package isn't kidding about having a "preview" version number. You are of course welcome to use it as you like, but please be aware there are known missing features (for example it doesn't work with animated meshes) and almost has certainly bugs.
 
-I am still working on this and intend to bring it up to release quality. At the moment I'm busy working full-time on projects away from Unity, so progress is not fast. Pull requests are always welcome if you're feeling inspired!
+These days I work full-time on projects away from Unity, so please don't expect much progress.
 
+## Example Screenshot
 ![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/Documentation~/images/demonstration.png)
 
 ## Key Features
@@ -36,7 +41,7 @@ I am still working on this and intend to bring it up to release quality. At the 
 ### Requirements
 * Unity 2019.3.0f6 or later, using the universal render pipeline (URP) version 7.2.1 or later.
 
-In theory it should work in the LWRP and Unity versions as far back as 2018. But it looks like shader graph really doesn't care about cross-version compatibility. If you need this to work in those earlier versions I may be able to put together something compatible with some extra work. 
+In theory it should work in the LWRP and Unity versions as far back as 2018. But it looks like shader graph really doesn't care about cross-version compatibility. If you need this to work in those earlier versions I may be able to put together something compatible with some extra work.
 
 ### Installation
 1. Within your project open the Package Manager from *Window* → *Package Manager*
@@ -59,7 +64,7 @@ In theory it should work in the LWRP and Unity versions as far back as 2018. But
 [Extensive documentation including step-by-step instructions to get you started.](Documentation~/DrivenDecals.md)
 
 ## Authors
-Sam Driver - [Website](https://samdriver.xyz/), [Twitter](https://twitter.com/SamDriver_), [PayPal](https://www.paypal.me/SamDriver336) (any support is very gratefully received)
+Sam Driver - [Website](https://samdriver.xyz/)
 
 ### Special Thanks
 [Kenny5](https://github.com/Kenny5) - Made everything work nicely with the Unity Package Manager.

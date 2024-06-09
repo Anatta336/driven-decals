@@ -1,4 +1,8 @@
 # Changelog
+## [0.8.0] - 2024-06-09
+### Changed
+- Updated to work with Unity 2023.3 LTS. Specifically tested with Unity 2022.3.32f1 using Universal Render Pipeline 14.0.11.
+- No new features, so you'll not miss out on anything by using 0.7 if your project is using an older Unity or URP version.
 
 ## [0.7.0] - 2020-06-09
 ### Added
@@ -8,7 +12,7 @@
 ### Changed
 - Thanks to [Kenny5](https://github.com/Kenny5) many directories have been moved around to support Unity's package manager.
 - This changelog now uses [semantic version numbers](https://semver.org/) instead of just dates. Note that the major version number is still 0, indicating the project is in the initial development phase so even minor version increases may make breaking changes. I expect to move to 1.0.0 fairly soon.
-- Rearranged the documentation. The README is now far shorter with the bulk of documentation [moved to its own file](Documentation~/DrivenDecals.md). 
+- Rearranged the documentation. The README is now far shorter with the bulk of documentation [moved to its own file](Documentation~/DrivenDecals.md).
 - Updated the 60 second introduction video to use the package manager method of installation.
 
 ### Fixed
