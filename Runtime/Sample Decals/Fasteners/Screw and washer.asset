@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Screw and washer
   m_EditorClassIdentifier: 
   Material: {fileID: 2100000, guid: 41cdeb38201dd97469527bde6ed67f4b, type: 2}
-  uMin: 0.52036273
-  vMin: 0.037142858
-  uMax: 0.72
-  vMax: 0.23797433
+  uMin: 0.5247748
+  vMin: 0.039930753
+  uMax: 0.7178149
+  vMax: 0.23665452

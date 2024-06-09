@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Screw in indent
   m_EditorClassIdentifier: 
   Material: {fileID: 2100000, guid: 41cdeb38201dd97469527bde6ed67f4b, type: 2}
-  uMin: 0.6772154
-  vMin: 0.24007255
-  uMax: 0.98759484
-  vMax: 0.560904
+  uMin: 0.6840146
+  vMin: 0.24463588
+  uMax: 0.98439366
+  vMax: 0.5533265
