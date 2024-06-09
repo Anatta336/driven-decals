@@ -1,24 +1,18 @@
 # Driven Decals
-A mesh-based PBR decal system for Unity. For use with the Universal Render Pipeline's forward renderer.
+A mesh-based PBR decal system for Unity. For use with the Universal Render Pipeline.
 
-These types of decals are generally good for static things like cracks and graffiti added into the game during level design (or during an initial procedural generation process).
+These types of decals are good for static things like cracks and graffiti added into the game during level design (or during an initial procedural generation process).
 
-This way of handling decals is bad for things like adding bullet holes when the player shoots. Instead you should use a shader to do projection in realtime.
+This way of handling decals is bad for things like adding bullet holes when the player shoots. For dynamic decals, you can use the Universal Render Pipeline's [decal rendering feature](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@12.0/manual/renderer-feature-decal.html).
 
-There are broadly two approaches to rendering projected decals in real-time graphics:
-* Generate a projected mesh for each decal instance in the scene.
-* Dynamically project the decal in view-space using a fragment shader.
+I've [written a little interactive article about these two types of decal](https://samdriver.xyz/articles/decalsIntro.htm) if you would like to know more.
 
-Each approach has its strengths and many projects benefit from using both for different situations. For example *Half-Life: Alyx* uses projected mesh decals for some static scenery details, and view-space projected decals for dynamic effects like bullet holes. I've [written a little interactive article about how decals can be rendered](https://samdriver.xyz/articles/decalsIntro.htm) if you would like to know more.
-
-This decal system only deals with creating projected meshes, so you shouldn't expect it to be a complete solution to every decal use case.
-
-[60 second introduction video.](https://www.youtube.com/watch?v=zFEtdRrD2D4)
+[60 second introduction video on using this package.](https://www.youtube.com/watch?v=zFEtdRrD2D4)
 
 ## Status - Last updated 2024-06-09
-Hello! This package isn't kidding about having a "preview" version number. You are of course welcome to use it as you like, but please be aware there are known missing features (for example it doesn't work with animated meshes) and almost has certainly bugs.
+Note that this package has a "preview" version number. You are of course welcome to use it as you like, but please be aware there are known missing features (for example it doesn't work with animated meshes) and almost has certainly bugs.
 
-These days I work full-time on projects away from Unity, so please don't expect much progress.
+These days I work full-time on projects away from Unity, so please don't expect rapid progress.
 
 ## Example Screenshot
 ![Decals applied to a cylinder, giving the impression that it is made of cracked concrete. One of the cracks reveals a bright abstract pattern beneath the surface.](/Documentation~/images/demonstration.png)
