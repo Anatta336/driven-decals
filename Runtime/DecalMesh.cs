@@ -189,7 +189,7 @@ namespace SamDriver.Decal
         /// <summary>
         /// Adjust this object's local scale to make its aspect ratio match selected decal texture's bounds.
         /// Will decrease either the x or y component of local scale, never changes z.
-        /// 
+        ///
         /// Will throw DecalException if unable to perform the scale operation.
         /// You should check CanScaleToMatchDecal before calling.
         /// </summary>
@@ -403,6 +403,8 @@ namespace SamDriver.Decal
                     #endif
 
                     //NOTE: if you want to exclude any other objects from "all static objects" here's the place to do it
+
+                    if (meshFilter.sharedMesh == null) continue;
 
                     var bounds = meshFilter.sharedMesh.bounds;
                     Vector3 meshCenter = meshFilter.transform.TransformPoint(bounds.center);
